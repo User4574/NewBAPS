@@ -1,0 +1,9 @@
+This is the eclipse project for the new BAPS.
+
+Most of the work is being done by Matt Windsor, who is doing an excellent job.
+
+Check it out with git clone, then import into eclipse.
+
+Please try to maintain this in such a way as to just build out of the box.
+
+Thanks.
