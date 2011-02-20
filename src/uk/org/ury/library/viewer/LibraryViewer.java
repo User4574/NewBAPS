@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
+import uk.org.ury.config.ConfigReader;
 import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.UserClass;
 import uk.org.ury.database.exceptions.MissingCredentialsException;
@@ -42,6 +43,7 @@ public class LibraryViewer extends AbstractFrontendModule
   public static void
   main (String[] args)
   {
+	new ConfigReader();
     LibraryViewer lv = new LibraryViewer ();
     lv.runFrontendInFrame ();
   }
@@ -167,11 +169,11 @@ public class LibraryViewer extends AbstractFrontendModule
    */
   
   public void
-  doSearch (String title, String artist)
+  doSearch (String search)
   {
     try
       {
-        libraryList = LibraryUtils.search (dd, title, artist);
+        libraryList = LibraryUtils.search (dd, search);
       }
     catch (QueryFailureException e)
       {

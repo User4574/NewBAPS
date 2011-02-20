@@ -23,7 +23,7 @@ import uk.org.ury.database.exceptions.MissingCredentialsException;
 public class DatabaseDriver
 { 
   /* The JDBC path used to connect to the URY database. */
-  private String DATABASE_PATH = "jdbc:postgresql://localhost/membership";
+  private String DATABASE_PATH = "jdbc:postgresql://4574.co.uk/membership";
   
   /* The database connection. */
   private Connection conn;

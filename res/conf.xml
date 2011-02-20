@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<config version="1.0" >
+
+	<database>
+		<host>4574.co.uk</host>
+		<port>5432</port>
+		<db>membership</db>
+	</database>
+	
+	<auth>
+		<user>xauth</user>
+		<pass></pass>
+		<type>read_only</type>
+	</auth>
+	
+</config>

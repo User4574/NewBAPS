@@ -32,10 +32,7 @@ public class LibraryUtils
    * 
    * @param db      The database to query.
    * 
-   * @param title   The title fragment to include in the search.
-   *                Can be empty or null.
-   *                
-   * @param artist  The artist fragment to include in the search.
+   * @param title   The search fragment to include in the search.
    *                Can be empty or null.
    *                
    * @throws        IllegalArgumentException if db, title or artist 
@@ -49,22 +46,23 @@ public class LibraryUtils
    */
   
   public static List<LibraryItem>
-  search (DatabaseDriver db, String title, String artist)
+  search (DatabaseDriver db, String search)
   throws QueryFailureException
   {
     if (db == null)
       throw new IllegalArgumentException ("Database handle is null.");
 
-    if (title == null)
-      throw new IllegalArgumentException ("Title string is null.");    
-
-    if (artist == null)
-      throw new IllegalArgumentException ("Artist string is null.");
+    if (search == null)
+      throw new IllegalArgumentException ("Search string is null.");
+    
+    if (search.equals(""))
+    	//TODO: Be nicer about this
+      System.exit(1);
     
     
     ResultSet rs = null;
     List<LibraryItem> results = new ArrayList<LibraryItem> ();
-    Object[] params = {"%" + title + "%", "%" + artist + "%"};
+    Object[] params = {"%" + search + "%", "%" + search + "%"};
     
     try
       {
@@ -78,7 +76,7 @@ public class LibraryUtils
             + " INNER JOIN member AS a ON (a.memberid = r.memberid_add)"
             + " LEFT JOIN member AS b ON (b.memberid = r.memberid_lastedit)" 
             + " WHERE title ILIKE ?"
-            + " AND artist ILIKE ?;", params, 50);
+            + " OR artist ILIKE ?;", params, 50);
       }
     catch (SQLException e)
       {

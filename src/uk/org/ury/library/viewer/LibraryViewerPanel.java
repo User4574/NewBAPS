@@ -5,6 +5,7 @@ package uk.org.ury.library.viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -43,11 +44,9 @@ public class LibraryViewerPanel extends FrontendPanel
   private JTable resultsTable;
   private JScrollPane resultsPane;
   
-  private JLabel titleLabel;
-  private JLabel artistLabel;
+  private JLabel searchLabel;
   
-  private JTextField titleField;
-  private JTextField artistField;
+  private JTextField searchField;
   
   private JButton searchButton;
   
@@ -76,28 +75,32 @@ public class LibraryViewerPanel extends FrontendPanel
     layout.setAutoCreateGaps (true);
     layout.setAutoCreateContainerGaps (true);
     
-    titleLabel = new JLabel ("By title: ");
-    artistLabel = new JLabel ("By artist: ");
+    searchLabel = new JLabel ("Search");
+    searchLabel.setFont(new Font("Verdana", Font.BOLD, 14));
 
-    titleField = new JTextField ();
+    searchField = new JTextField ();
     
-    titleField.setPreferredSize (new Dimension (250, 15));
+    searchField.setPreferredSize (new Dimension (250, 25));
+    searchField.setFont(new Font("Verdana", Font.BOLD, 14));
     
-    titleLabel.setDisplayedMnemonic ('T');
-    titleLabel.setLabelFor (titleField);
-    
-    artistField = new JTextField ();
-    artistLabel.setDisplayedMnemonic ('A');
-    artistLabel.setLabelFor (artistField);
-    
+    searchLabel.setDisplayedMnemonic ('T');
+    searchLabel.setLabelFor (searchField);
+        
     searchButton = new JButton ("Search");
+    
+    searchField.addActionListener(new ActionListener() {
+    	public void actionPerformed (ActionEvent event) {
+    		master.doSearch (searchField.getText ());
+            resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
+    	}
+    });
         
     searchButton.addActionListener (new ActionListener () 
     {
       public void
       actionPerformed (ActionEvent event)
       {
-        master.doSearch (titleField.getText (), artistField.getText ());
+        master.doSearch (searchField.getText ());
         resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
       }
     });
@@ -110,11 +113,9 @@ public class LibraryViewerPanel extends FrontendPanel
       (
         layout.createSequentialGroup ()
           .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING) 
-            .addComponent (titleLabel)
-            .addComponent (artistLabel))
+            .addComponent (searchLabel))
           .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING) 
-            .addComponent (titleField)
-            .addComponent (artistField))
+            .addComponent (searchField))
           .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING)
             .addComponent (searchButton))
       );
@@ -123,16 +124,13 @@ public class LibraryViewerPanel extends FrontendPanel
       (
         layout.createSequentialGroup ()
           .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING)
-            .addComponent (titleLabel)
-            .addComponent (titleField)
+            .addComponent (searchLabel)
+            .addComponent (searchField)
             .addComponent (searchButton))
-          .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING)
-            .addComponent (artistLabel)
-            .addComponent (artistField))
       );
 
-    layout.linkSize (SwingConstants.HORIZONTAL, titleField, artistField);
-    layout.linkSize (SwingConstants.VERTICAL, titleField, artistField);
+    layout.linkSize (SwingConstants.HORIZONTAL, searchField);
+    layout.linkSize (SwingConstants.VERTICAL, searchField);
     
     add (groupPanel, BorderLayout.NORTH);
     
@@ -149,9 +147,7 @@ public class LibraryViewerPanel extends FrontendPanel
     
     // Explanation (TODO: Subclass?)
     
-    JTextArea explanation = new JTextArea ("To narrow your search, type part or all of the record title or artist"
-                                           + " into the respective box above.  If you leave a box blank, it will"
-                                           + " not be used in the search.");
+    JTextArea explanation = new JTextArea ("To narrow your search, type part or all of the record title or artist into the box above.");
     
     explanation.setLineWrap (true);
     explanation.setWrapStyleWord (true);
