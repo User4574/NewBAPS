@@ -6,6 +6,7 @@ package uk.org.ury.frontend;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
@@ -60,6 +61,8 @@ public class FrontendFrame extends JFrame
     
     cp.add (banner, BorderLayout.NORTH);
     cp.add (parent, BorderLayout.CENTER);
+    
+    setPreferredSize (new Dimension (640, 480));
     
     pack ();
     setVisible (true);

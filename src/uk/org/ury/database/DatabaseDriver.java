@@ -2,6 +2,7 @@ package uk.org.ury.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -77,7 +78,15 @@ public class DatabaseDriver
   }
   
   
-  public void
+  /**
+   * Connect to the URY database.
+   * 
+   * @param login  The login tuple to use for the connection.   
+   * 
+   * @throws       SQLException if the database connection failed.
+   */
+  
+  private void
   connect (DatabaseLogin login) throws SQLException
   {
     if (login == null)
@@ -89,6 +98,7 @@ public class DatabaseDriver
     if (login.getPassword () == null)
       throw new IllegalArgumentException ("Login has no associated password.");
     
+    
     conn = DriverManager.getConnection (DATABASE_PATH,
                                         login.getUsername (),
                                         login.getPassword ());
@@ -96,20 +106,21 @@ public class DatabaseDriver
   
   
   /**
-   * Execute a SQL statement.
+   * Execute an unprepared SQL statement with no arguments.
    * 
-   * @param sql  The SQL statement to execute.
+   * @param sql        The SQL statement to execute.
+   * @param fetchSize  The maximum number of query rows to return.
    * 
-   * @return     the JDBC results set.
+   * @return           the JDBC results set.
    */
   
   public ResultSet
-  executeQuery (String sql)
+  executeQuery (String sql, int fetchSize)
   {
     try 
       {
         Statement st = conn.createStatement ();
-        st.setFetchSize (50);
+        st.setFetchSize (fetchSize);
         
         return st.executeQuery (sql);
       }
@@ -118,5 +129,44 @@ public class DatabaseDriver
         e.printStackTrace ();
         return null;
       }
+  }
+
+  
+  /**
+   * Perform a SQL statement with arguments.
+   * 
+   * This accepts an array of parameter objects, which must each 
+   * either be String or Integer objects.  The objects will be used 
+   * sequentially to fill in '?' placeholders in the query text.
+   * 
+   * @param sql        The SQL statement to execute.
+   * @param params     A list of parameter objects.
+   * @param fetchSize  The maximum number of query rows to return.
+   *                
+   * @return           the set of results from the query.
+   * 
+   * @throws           IllegalArgumentException if any of the
+   *                   parameters is unsupported by the database as 
+   *                   a statement parameter.
+   *                   
+   * @throws           SQLException if a SQL error occurs.
+   */
+
+  public ResultSet
+  executeQuery (String sql, Object[] params, int fetchSize) throws SQLException
+  {
+    PreparedStatement st = conn.prepareStatement (sql);
+    
+    st.setFetchSize (50);
+    
+    for (int i = 0; i < params.length; i++)
+      if (params[i] instanceof String)
+        st.setString (i + 1, (String) params[i]);
+      else if (params[i] instanceof Integer)
+        st.setInt (i + 1, (Integer) params[i]);
+      else
+        throw new IllegalArgumentException ("Unsupported parameter #" + (i + 1));
+    
+    return st.executeQuery ();
   }
 }

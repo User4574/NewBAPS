@@ -3,16 +3,24 @@
  */
 package uk.org.ury.library.viewer;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import uk.org.ury.frontend.FrontendPanel;
+import uk.org.ury.library.LibraryTableModel;
 
 /**
  * @author Matt Windsor
@@ -30,6 +38,11 @@ public class LibraryViewerPanel extends FrontendPanel
   private LibraryViewer master;
   
   /* Panel widgets. */
+  
+  private LibraryTableModel resultsModel;
+  private JTable resultsTable;
+  private JScrollPane resultsPane;
+  
   private JLabel titleLabel;
   private JLabel artistLabel;
   
@@ -42,19 +55,23 @@ public class LibraryViewerPanel extends FrontendPanel
   /**
    * Construct a new LibraryViewerPanel.
    * 
-   * @param master  The LibraryViewer controlling this LibraryViewerPanel.
+   * @param inMaster  The LibraryViewer controlling this LibraryViewerPanel.
    */
   
   public
-  LibraryViewerPanel (LibraryViewer master)
+  LibraryViewerPanel (LibraryViewer inMaster)
   {
     super ();
     
-    this.master = master;
+    master = inMaster;
     
-    GroupLayout layout = new GroupLayout (this);
+    setLayout (new BorderLayout ());
     
-    setLayout (layout);
+    JPanel groupPanel = new JPanel ();
+    
+    GroupLayout layout = new GroupLayout (groupPanel);
+    
+    groupPanel.setLayout (layout);
     
     layout.setAutoCreateGaps (true);
     layout.setAutoCreateContainerGaps (true);
@@ -62,11 +79,14 @@ public class LibraryViewerPanel extends FrontendPanel
     titleLabel = new JLabel ("By title: ");
     artistLabel = new JLabel ("By artist: ");
 
-    titleField = new JTextField ("Type part of the title here.");
+    titleField = new JTextField ();
+    
+    titleField.setPreferredSize (new Dimension (250, 15));
+    
     titleLabel.setDisplayedMnemonic ('T');
     titleLabel.setLabelFor (titleField);
     
-    artistField = new JTextField ("Type part of the artist name here.");
+    artistField = new JTextField ();
     artistLabel.setDisplayedMnemonic ('A');
     artistLabel.setLabelFor (artistField);
     
@@ -77,6 +97,8 @@ public class LibraryViewerPanel extends FrontendPanel
       public void
       actionPerformed (ActionEvent event)
       {
+        master.doSearch (titleField.getText (), artistField.getText ());
+        resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
       }
     });
     
@@ -109,8 +131,35 @@ public class LibraryViewerPanel extends FrontendPanel
             .addComponent (artistField))
       );
 
-    layout.linkSize(SwingConstants.HORIZONTAL, titleField, artistField);
-    layout.linkSize(SwingConstants.VERTICAL, titleField, artistField);
+    layout.linkSize (SwingConstants.HORIZONTAL, titleField, artistField);
+    layout.linkSize (SwingConstants.VERTICAL, titleField, artistField);
+    
+    add (groupPanel, BorderLayout.NORTH);
+    
+    
+    // Table
+    
+    resultsModel = new LibraryTableModel (master.getLibraryList ());
+    resultsTable = new JTable (resultsModel);
+    
+    resultsPane = new JScrollPane (resultsTable); 
+    
+    add (resultsPane, BorderLayout.CENTER);
+    
+    
+    // Explanation (TODO: Subclass?)
+    
+    JTextArea explanation = new JTextArea ("To narrow your search, type part or all of the record title or artist"
+                                           + " into the respective box above.  If you leave a box blank, it will"
+                                           + " not be used in the search.");
+    
+    explanation.setLineWrap (true);
+    explanation.setWrapStyleWord (true);
+    explanation.setEditable (false);
+    explanation.setOpaque (false);
+    explanation.setBorder (BorderFactory.createEmptyBorder (5, 5, 5, 5));
+    
+    add (explanation, BorderLayout.SOUTH);
   }
   
   

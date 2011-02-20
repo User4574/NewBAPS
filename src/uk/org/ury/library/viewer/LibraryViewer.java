@@ -1,8 +1,7 @@
 package uk.org.ury.library.viewer;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,18 +10,23 @@ import javax.swing.SwingUtilities;
 import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.UserClass;
 import uk.org.ury.database.exceptions.MissingCredentialsException;
+import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.frontend.AbstractFrontendModule;
 import uk.org.ury.frontend.FrontendError;
 import uk.org.ury.frontend.FrontendFrame;
-import uk.org.ury.frontend.FrontendModule;
+
 import uk.org.ury.library.LibraryItem;
+
+import uk.org.ury.library.LibraryUtils;
 
 public class LibraryViewer extends AbstractFrontendModule
 {
   /**
    * 
    */
+  
   private static final long serialVersionUID = -2782366476480563739L;
+  private DatabaseDriver dd;
   private List<LibraryItem> libraryList;
   private LibraryViewerPanel panel;
   private FrontendFrame frame;
@@ -51,6 +55,7 @@ public class LibraryViewer extends AbstractFrontendModule
   LibraryViewer ()
   {
     frame = null;
+    libraryList = new ArrayList<LibraryItem> ();
     panel = new LibraryViewerPanel (this);
   }
   
@@ -63,6 +68,7 @@ public class LibraryViewer extends AbstractFrontendModule
   init ()
   {
     frame = null;
+    libraryList = new ArrayList<LibraryItem> ();
     panel = new LibraryViewerPanel (this);
     
     
@@ -107,6 +113,7 @@ public class LibraryViewer extends AbstractFrontendModule
     add (panel);
   } 
   
+  
   /**
    * Run the library viewer frontend in a FrontendFrame.
    */
@@ -128,7 +135,7 @@ public class LibraryViewer extends AbstractFrontendModule
   private void
   runFrontend ()
   { 
-    DatabaseDriver dd = null;
+    dd = null;
     
     try
       {
@@ -143,55 +150,43 @@ public class LibraryViewer extends AbstractFrontendModule
       {
         FrontendError.reportFatal (f.getMessage (), frame);
       }
+  }
 
-      
-    System.out.println ("connection success");
-    
-    ResultSet rs = dd.executeQuery ("SELECT title, artist, recordlabel AS label, status, media AS medium, format,"
-        + " datereleased, EXTRACT(EPOCH FROM dateadded) as dateadded,"
-        + " EXTRACT(EPOCH FROM datetime_lastedit) AS dateedited,"
-        + " shelfletter, shelfnumber, cdid, memberid_add, memberid_lastedit,"
-        + " a.fname AS fnameadd, a.sname AS snameadd, b.fname AS fnameedit, b.sname AS snameedit"
-        + " FROM rec_record AS r"
-        + " INNER JOIN member AS a ON (a.memberid = r.memberid_add)"
-        + " LEFT JOIN member AS b ON (b.memberid = r.memberid_lastedit)");
-    
-    
-      libraryList = new ArrayList<LibraryItem> ();
-    
-      try
-        {
-          while (rs.next ())
-            {
-              LibraryItem li = new LibraryItem ();
-              
-              li.setTitle        (rs.getString ("title"));
-              li.setArtist       (rs.getString ("artist"));
-              li.setLabel        (rs.getString ("label"));
-              li.setStatus       (rs.getString ("status"));
-              li.setMedium       (rs.getString ("medium"));
-              li.setFormat       (rs.getString ("format"));
-              li.setDateReleased (rs.getString ("datereleased"));
-              li.setDateEdited   (rs.getString ("dateedited"));
-              li.setShelfLetter  (rs.getString ("shelfletter"));
-              li.setShelfNumber  (rs.getString ("shelfnumber"));
-              li.setCdID         (rs.getString ("cdid"));
-              li.setAddMemberID  (rs.getInt    ("memberid_add"));
-              li.setEditMemberID (rs.getInt    ("memberid_lastedit"));
-              li.setAddForename  (rs.getString ("fnameadd"));
-              li.setAddSurname   (rs.getString ("snameadd"));
-              li.setEditForename (rs.getString ("fnameedit"));
-              li.setEditSurname  (rs.getString ("snameedit"));
-              
-              System.out.println (li);
-              
-              libraryList.add (li);
-            }
-        }
-      catch (SQLException e)
-        {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+
+  /**
+   * Do a library search.
+   * 
+   * This will update the library list to reflect the results of the 
+   * search.
+   * 
+   * @param title   The title fragment to include in the search.  
+   *                Can be empty or null.
+   *                
+   * @param artist  The artist fragment to include in the search.
+   *                Can be empty or null.
+   */
+  
+  public void
+  doSearch (String title, String artist)
+  {
+    try
+      {
+        libraryList = LibraryUtils.search (dd, title, artist);
+      }
+    catch (QueryFailureException e)
+      {
+        FrontendError.reportFatal (e.getMessage (), frame);
+      }
+  }
+
+  
+  /**
+   * @return  the current library list.
+   */
+
+  public List<LibraryItem> 
+  getLibraryList ()
+  {
+    return libraryList;
   }
 }
