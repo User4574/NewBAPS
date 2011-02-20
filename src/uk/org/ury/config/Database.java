@@ -3,7 +3,7 @@ package uk.org.ury.config;
 /**
  * A Database Server configuration
  * 
- * @author Nathan
+ * @author Nathan Lasseter
  */
 public class Database {
 

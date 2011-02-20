@@ -1,17 +1,14 @@
 package uk.org.ury.config;
 
-import uk.org.ury.database.UserClass;
-
 /**
  * A login authorisation configuration
  * 
- * @author Nathan
+ * @author Nathan Lasseter
  */
 public class Auth {
 	
 	private String user;
 	private String pass;
-	private UserClass type;
 	
 	/**
 	 * Get the username of the login
@@ -25,23 +22,15 @@ public class Auth {
 	 * @return String password
 	 */
 	public String getPass() { return pass; }
-	/**
-	 * Get the access level of the login
-	 * 
-	 * @return UserClass type
-	 */
-	public UserClass getType() { return type; }
 	
 	/**
 	 * Create a login auth object
 	 * @param user The username for the login
 	 * @param pass The password for the login
-	 * @param type The access type for the login
 	 */
-	public Auth(String user, String pass, UserClass type) {
+	public Auth(String user, String pass) {
 		this.user = user;
 		this.pass = pass;
-		this.type = type;
 	}
 	
 }
