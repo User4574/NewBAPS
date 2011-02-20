@@ -35,6 +35,7 @@ public class DatabaseLogin
    * @param password  The database password.
    * 
    * @see             getLoginFromFile
+   * @see             getLoginFromConfig
    */
   
   private
@@ -126,6 +127,30 @@ public class DatabaseLogin
     return login;
   }
 
+  
+  /**
+   * Retrieve login credentials from the configuration file.
+   * 
+   * @param configName  The name of the tag in the configuration 
+   *                    file containing the credentials.
+   *                    
+   * @return            a new DatabaseLogin containing the information 
+   *                    retrieved from the file.
+   * 
+   * @throws            IllegalArgumentException if the filename is 
+   *                    null.
+   * 
+   * @throws            MissingCredentialsException if the tag or 
+   *                    configuration file does not exist.
+   */
+  
+  public static DatabaseLogin
+  getLoginFromConfig (String configName)
+  {
+    // TODO Auto-generated method stub
+    return null;
+  }
+  
 
   /**
    * @return  the username.

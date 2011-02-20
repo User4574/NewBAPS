@@ -19,6 +19,22 @@ package uk.org.ury.database;
 
 public enum UserClass
   {
-    READ_ONLY,
-    READ_WRITE
+    // Constant  configName
+    READ_ONLY    ("read_only"),
+    READ_WRITE   ("read_write");
+    
+    
+    /**
+     * The name of the tag in the configuration file that contains
+     * the credentials for this user class.
+     */
+    
+    public String configName;
+    
+    
+    private
+    UserClass (String configName)
+    {
+      this.configName = configName;
+    }
   }

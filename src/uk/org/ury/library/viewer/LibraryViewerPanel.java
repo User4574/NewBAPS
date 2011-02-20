@@ -3,28 +3,24 @@
  */
 package uk.org.ury.library.viewer;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import java.net.URL;
+
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
 
+import org.swixml.SwingEngine;
+
+import uk.org.ury.frontend.FrontendError;
 import uk.org.ury.frontend.FrontendPanel;
+import uk.org.ury.frontend.HintField;
 import uk.org.ury.library.LibraryTableModel;
 
+
 /**
- * @author Matt Windsor
+ * Frontend panel providing access to an underlying library viewer.
+ * 
+ * @author Matt Windsor, Nathan Lasseter
  */
 
 public class LibraryViewerPanel extends FrontendPanel
@@ -33,23 +29,33 @@ public class LibraryViewerPanel extends FrontendPanel
    * 
    */
   private static final long serialVersionUID = -2441616418398056712L;
+ 
+  
+  /**
+   * Action method for performing a search, bound by the UI XML
+   * manifest to the search field and button
+   */
+  
+  public void
+  search ()
+  {
+    // TODO: SwingWorker?
+    
+    master.doSearch (searchField.getText ());
+    
+    // This is necessary to force the table to update with the new results.
+    
+    resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
+  }
   
 
   /* Controller of this panel. */
   private LibraryViewer master;
   
-  /* Panel widgets. */
+  /* Panel widgets exposed by the SwiXML user interface. */
   
-  private LibraryTableModel resultsModel;
   private JTable resultsTable;
-  private JScrollPane resultsPane;
-  
-  private JLabel searchLabel;
-  
   private JTextField searchField;
-  
-  private JButton searchButton;
-  
   
   /**
    * Construct a new LibraryViewerPanel.
@@ -63,99 +69,33 @@ public class LibraryViewerPanel extends FrontendPanel
     super ();
     
     master = inMaster;
+   
     
-    setLayout (new BorderLayout ());
+    URL path = getClass ().getResource ("library_viewer_gui.xml");
     
-    JPanel groupPanel = new JPanel ();
+    if (path == null)
+      throw new IllegalArgumentException ("XML file does not exist.");
+  
+    SwingEngine se = new SwingEngine (this);
+    se.getTaglib ().registerTag ("hint", HintField.class);
     
-    GroupLayout layout = new GroupLayout (groupPanel);
     
-    groupPanel.setLayout (layout);
+    /* The UI implementation is contained in library_viewer_gui.xml.
+     *
+     * It is hooked into the object resultsTable and the action 
+     * method search.
+     * 
+     * See the XML file for more details.
+     */
     
-    layout.setAutoCreateGaps (true);
-    layout.setAutoCreateContainerGaps (true);
-    
-    searchLabel = new JLabel ("Search");
-    searchLabel.setFont(new Font("Verdana", Font.BOLD, 14));
-
-    searchField = new JTextField ();
-    
-    searchField.setPreferredSize (new Dimension (250, 25));
-    searchField.setFont(new Font("Verdana", Font.BOLD, 14));
-    
-    searchLabel.setDisplayedMnemonic ('T');
-    searchLabel.setLabelFor (searchField);
-        
-    searchButton = new JButton ("Search");
-    
-    searchField.addActionListener(new ActionListener() {
-    	public void actionPerformed (ActionEvent event) {
-    		master.doSearch (searchField.getText ());
-            resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
-    	}
-    });
-        
-    searchButton.addActionListener (new ActionListener () 
-    {
-      public void
-      actionPerformed (ActionEvent event)
+    try
       {
-        master.doSearch (searchField.getText ());
-        resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
+        se.insert (path, this);
       }
-    });
-    
-    
-    // Layout
-    
-    
-    layout.setHorizontalGroup
-      (
-        layout.createSequentialGroup ()
-          .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING) 
-            .addComponent (searchLabel))
-          .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING) 
-            .addComponent (searchField))
-          .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING)
-            .addComponent (searchButton))
-      );
-    
-    layout.setVerticalGroup
-      (
-        layout.createSequentialGroup ()
-          .addGroup (layout.createParallelGroup (GroupLayout.Alignment.LEADING)
-            .addComponent (searchLabel)
-            .addComponent (searchField)
-            .addComponent (searchButton))
-      );
-
-    layout.linkSize (SwingConstants.HORIZONTAL, searchField);
-    layout.linkSize (SwingConstants.VERTICAL, searchField);
-    
-    add (groupPanel, BorderLayout.NORTH);
-    
-    
-    // Table
-    
-    resultsModel = new LibraryTableModel (master.getLibraryList ());
-    resultsTable = new JTable (resultsModel);
-    
-    resultsPane = new JScrollPane (resultsTable); 
-    
-    add (resultsPane, BorderLayout.CENTER);
-    
-    
-    // Explanation (TODO: Subclass?)
-    
-    JTextArea explanation = new JTextArea ("To narrow your search, type part or all of the record title or artist into the box above.");
-    
-    explanation.setLineWrap (true);
-    explanation.setWrapStyleWord (true);
-    explanation.setEditable (false);
-    explanation.setOpaque (false);
-    explanation.setBorder (BorderFactory.createEmptyBorder (5, 5, 5, 5));
-    
-    add (explanation, BorderLayout.SOUTH);
+    catch (Exception e)
+      {
+        FrontendError.reportFatal ("UI creation failure: " + e.getMessage (), null);
+      }
   }
   
   

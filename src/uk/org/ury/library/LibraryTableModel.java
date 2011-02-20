@@ -49,7 +49,7 @@ public class LibraryTableModel extends AbstractTableModel
   public int
   getColumnCount ()
   {
-    return 3;
+    return 5;
   }
 
   
@@ -65,6 +65,19 @@ public class LibraryTableModel extends AbstractTableModel
   }
 
   
+  /**
+   * @param c  The column whose class should be investigated.
+   * 
+   * @return   the column class of column c.
+   */
+  
+  @Override
+  public Class<?>
+  getColumnClass (int c) {
+    return getValueAt (0, c).getClass ();
+  }
+  
+  
   /* (non-Javadoc)
    * @see javax.swing.table.TableModel#getValueAt(int, int)
    */
@@ -78,10 +91,39 @@ public class LibraryTableModel extends AbstractTableModel
       {
       case 0: // Title
         return li.get (LibraryProperty.TITLE);
+        
       case 1: // Artist
         return li.get (LibraryProperty.ARTIST);
-      case 2: // Medium
-        return li.get (LibraryProperty.MEDIUM);
+        
+      case 2: // Album
+        return li.get (LibraryProperty.ALBUM);
+        
+      case 3: // Medium
+        
+        // TODO: Make this less kludge-y
+        
+        String mediumString = li.get (LibraryProperty.MEDIUM);
+        
+        if (mediumString.equals ("c"))
+          return "Compact Disc";
+        else if (mediumString.equals ("7"))
+          return "7\" Vinyl";
+        else if (mediumString.equals ("2"))
+          return "12\" Vinyl";
+        else
+          return "Unrecognised";
+        
+      case 4: // Digitised
+        
+        // Return true if marked true, false if marked false or unknown etc.
+        
+        String digitisedString = li.get (LibraryProperty.DIGITISED); 
+        
+        if (digitisedString.equals ("t"))
+          return true;
+        else
+          return false;
+        
       default:
         return "";
       }
@@ -103,7 +145,12 @@ public class LibraryTableModel extends AbstractTableModel
       case 1:
         return "Artist";
       case 2:
+        return "Album";
+      case 3:
         return "Medium";
+      case 4:
+        return "On system?";
+        
       default:
         return "ERROR";
       }

@@ -46,29 +46,16 @@ public class DatabaseDriver
    */
   
   public
-  DatabaseDriver (UserClass userclass) throws MissingCredentialsException, ConnectionFailureException
+  DatabaseDriver (UserClass userclass) 
+    throws MissingCredentialsException, ConnectionFailureException
   { 
     DatabaseLogin login = null;
     
-    switch (userclass)
-    {
-    case READ_ONLY:
-      login = DatabaseLogin.getLoginFromFile ("read_only.txt");
-      break;
-    case READ_WRITE:
-      login = DatabaseLogin.getLoginFromFile ("read_write.txt");
-    default:
-      throw new IllegalArgumentException ("Unused user class.");
-    }
-
-
+    login = DatabaseLogin.getLoginFromFile (userclass.configName + ".txt");
+    
     try
       {
-        System.out.println ("Trying to acquire connection...");
-        
         connect (login);
-        
-        System.out.println ("...connection succeeded.");
       }
     catch (SQLException e)
       {

@@ -28,11 +28,9 @@ public class LibraryUtils
   /**
    * Perform a library search.
    * 
-   * Presently, the title and artist comparisons are logically ANDed.
-   * 
    * @param db      The database to query.
    * 
-   * @param title   The search fragment to include in the search.
+   * @param search  The search fragment to include in the search.
    *                Can be empty or null.
    *                
    * @throws        IllegalArgumentException if db, title or artist 
@@ -62,21 +60,27 @@ public class LibraryUtils
     
     ResultSet rs = null;
     List<LibraryItem> results = new ArrayList<LibraryItem> ();
-    Object[] params = {"%" + search + "%", "%" + search + "%"};
+    Object[] params = {"%" + search + "%", "%" + search + "%", "%" + search + "%"};
     
     try
       {
         rs = db.executeQuery (
-            "SELECT title, artist, recordlabel AS label, status, media AS medium, format,"
+            "SELECT r.title AS album, t.title,"
+            + " t.artist, recordlabel AS label, status, media AS medium, format,"
             + " datereleased, EXTRACT(EPOCH FROM dateadded) as dateadded,"
             + " EXTRACT(EPOCH FROM datetime_lastedit) AS dateedited,"
             + " shelfletter, shelfnumber, cdid, memberid_add, memberid_lastedit,"
+            + " digitised,"
             + " a.fname AS fnameadd, a.sname AS snameadd, b.fname AS fnameedit, b.sname AS snameedit"
             + " FROM rec_record AS r"
+            + " INNER JOIN rec_track AS t ON (r.recordid = t.recordid)"
             + " INNER JOIN member AS a ON (a.memberid = r.memberid_add)"
             + " LEFT JOIN member AS b ON (b.memberid = r.memberid_lastedit)" 
-            + " WHERE title ILIKE ?"
-            + " OR artist ILIKE ?;", params, 50);
+            + " WHERE t.title ILIKE ?"
+            + " OR t.artist ILIKE ?"
+            + " OR r.title ILIKE ?"
+            + " ORDER BY digitised DESC, medium ASC, r.title ASC,"
+            + " t.artist ASC, t.title ASC;", params, 50);
       }
     catch (SQLException e)
       {

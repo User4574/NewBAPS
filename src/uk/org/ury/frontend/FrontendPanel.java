@@ -15,6 +15,7 @@ import javax.swing.JPanel;
  * @author Matt Windsor
  *
  */
+
 public abstract class FrontendPanel extends JPanel
 {
   /**
@@ -28,7 +29,4 @@ public abstract class FrontendPanel extends JPanel
   {
     super ();
   }
-  
-  public abstract String
-  getName ();
 }

@@ -25,6 +25,7 @@ public class LibraryItem
   {
     // Constant     SQL identifier       
     TITLE           ("title"),
+    ALBUM           ("album"),
     ARTIST          ("artist"),
     LABEL           ("label"),
     STATUS          ("status"),
@@ -41,7 +42,8 @@ public class LibraryItem
     ADD_FORENAME    ("fnameadd"),
     ADD_SURNAME     ("snameadd"),
     EDIT_FORENAME   ("fnameedit"),
-    EDIT_SURNAME    ("snameedit");
+    EDIT_SURNAME    ("snameedit"),
+    DIGITISED       ("digitised");
     
     
     public final String sql;

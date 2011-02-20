@@ -1,0 +1,25 @@
+<synth>
+  <style id="backingStyle">
+    <opaque value="TRUE" />
+
+    <font name="Verdana" size="14" />
+
+    <state>
+      <color value="BLACK" type="BACKGROUND" />
+      <color value="WHITE" type="FOREGROUND" />
+    </state>
+  </style>
+
+  <bind style="backingStyle" type="region" key=".*" />
+
+
+  <style id="buttonStyle">
+    <state>
+      <color value="BLACK" type="BACKGROUND" />
+      <color value="WHITE" type="FOREGROUND" />
+    </state>
+  </style>
+
+  <bind style="buttonStyle" type="region" key="button" />
+</synth>
+
