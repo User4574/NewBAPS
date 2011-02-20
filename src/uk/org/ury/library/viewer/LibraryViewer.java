@@ -31,6 +31,7 @@ public class LibraryViewer extends AbstractFrontendModule
   private List<LibraryItem> libraryList;
   private LibraryViewerPanel panel;
   private FrontendFrame frame;
+  private static ConfigReader config;
   
   
   /**
@@ -43,7 +44,12 @@ public class LibraryViewer extends AbstractFrontendModule
   public static void
   main (String[] args)
   {
-	new ConfigReader();
+	  try {
+		  config = new ConfigReader("res/conf.xml");
+	  }
+	  catch(MissingCredentialsException e) {
+		  System.out.println(e);
+	  }
     LibraryViewer lv = new LibraryViewer ();
     lv.runFrontendInFrame ();
   }
@@ -141,7 +147,7 @@ public class LibraryViewer extends AbstractFrontendModule
     
     try
       {
-        dd = new DatabaseDriver (UserClass.READ_ONLY);
+        dd = new DatabaseDriver(config, UserClass.READ_ONLY);
       }
     catch (MissingCredentialsException e)
       {

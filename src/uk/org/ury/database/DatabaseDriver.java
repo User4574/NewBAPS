@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import uk.org.ury.config.ConfigReader;
 import uk.org.ury.database.exceptions.ConnectionFailureException;
 import uk.org.ury.database.exceptions.MissingCredentialsException;
 
@@ -17,13 +18,14 @@ import uk.org.ury.database.exceptions.MissingCredentialsException;
  * of SQL queries.
  *
  * @author Matt Windsor
+ * @author Nathan Lasseter
  *
  */
 
 public class DatabaseDriver
 { 
   /* The JDBC path used to connect to the URY database. */
-  private String DATABASE_PATH = "jdbc:postgresql://4574.co.uk/membership";
+  private String DATABASE_PATH = "jdbc:postgresql://";
   
   /* The database connection. */
   private Connection conn;
@@ -32,6 +34,7 @@ public class DatabaseDriver
   /**
    * Construct a new DatabaseDriver with the given user class.
    * 
+   * @param config	   The config with login details.
    * @param userclass  The user class to log in to the database with.
    * 
    * @throws           IllegalArgumentException if the user class is 
@@ -46,16 +49,11 @@ public class DatabaseDriver
    */
   
   public
-  DatabaseDriver (UserClass userclass) 
-    throws MissingCredentialsException, ConnectionFailureException
+  DatabaseDriver (ConfigReader config, UserClass type) throws MissingCredentialsException, ConnectionFailureException
   { 
-    DatabaseLogin login = null;
-    
-    login = DatabaseLogin.getLoginFromFile (userclass.configName + ".txt");
-    
     try
       {
-        connect (login);
+        connect (config, type);
       }
     catch (SQLException e)
       {
@@ -68,27 +66,43 @@ public class DatabaseDriver
   /**
    * Connect to the URY database.
    * 
-   * @param login  The login tuple to use for the connection.   
+   * @param config  The config to use for the connection.
+   * @param type	  The access level of the connection   
    * 
-   * @throws       SQLException if the database connection failed.
+   * @throws        SQLException if the database connection failed.
    */
   
   private void
-  connect (DatabaseLogin login) throws SQLException
+  connect (ConfigReader config, UserClass type) throws SQLException
   {
-    if (login == null)
-      throw new IllegalArgumentException ("Supplied null login.");
+    if (config == null)
+      throw new IllegalArgumentException ("Supplied null config.");
     
-    if (login.getUsername () == null)
-      throw new IllegalArgumentException ("Login has no associated username.");
+    if (config.getDatabase().getHost() == null)
+      throw new IllegalArgumentException ("config has no associated host.");
+
+    if (config.getDatabase().getDb() == null)
+      throw new IllegalArgumentException ("config has no associated database.");
     
-    if (login.getPassword () == null)
-      throw new IllegalArgumentException ("Login has no associated password.");
+    DATABASE_PATH = DATABASE_PATH + config.getDatabase().getHost() + "/" + config.getDatabase().getDb();
     
-    
-    conn = DriverManager.getConnection (DATABASE_PATH,
-                                        login.getUsername (),
-                                        login.getPassword ());
+    if(type == UserClass.READ_ONLY) {
+    	if(config.getRoAuth().getUser() == null)
+    		throw new IllegalArgumentException ("config has no associated username.");
+    	if(config.getRoAuth().getPass() == null)
+  	    	throw new IllegalArgumentException ("config has no associated password.");
+    	conn = DriverManager.getConnection (DATABASE_PATH,
+    										config.getRoAuth().getUser(),
+    										config.getRoAuth().getPass());
+    } else if(type == UserClass.READ_WRITE) {
+    	if(config.getRwAuth().getUser() == null)
+    		throw new IllegalArgumentException ("config has no associated username.");
+    	if(config.getRwAuth().getPass() == null)
+    		throw new IllegalArgumentException ("config has no associated password.");
+    	conn = DriverManager.getConnection (DATABASE_PATH,
+  											config.getRwAuth().getUser(),
+  											config.getRwAuth().getPass());
+    }
   }
   
   

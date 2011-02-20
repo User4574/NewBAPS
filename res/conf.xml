@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<config version="1.0" >
+<!--
+	Only the first database, and the first auths of each type are used.
+	Proceeding tags are ignored.
+	Do not have empty element nodes as this will break things.
+-->
+
+<config version="1.2" >
 
 	<database>
 		<host>4574.co.uk</host>
@@ -10,8 +16,13 @@
 	
 	<auth>
 		<user>xauth</user>
-		<pass></pass>
+		<pass>pass</pass>
 		<type>read_only</type>
 	</auth>
 	
+	<auth>
+		<user>xwrite</user>
+		<pass>password</pass>
+		<type>read_write</type>
+	</auth>
 </config>
