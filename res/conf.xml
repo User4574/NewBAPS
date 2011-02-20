@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
+<!--
+	At the moment the database and auth tags do nothing.
+	Only the first of each tag is read. Proceeding tags are ignored.
+-->
+
 <config version="1.0" >
 
 	<database>
