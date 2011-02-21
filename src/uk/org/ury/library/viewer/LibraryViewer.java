@@ -19,6 +19,7 @@ import uk.org.ury.frontend.FrontendFrame;
 import uk.org.ury.library.LibraryItem;
 
 import uk.org.ury.library.LibraryUtils;
+import uk.org.ury.library.exceptions.EmptySearchException;
 
 public class LibraryViewer extends AbstractFrontendModule
 {
@@ -167,15 +168,15 @@ public class LibraryViewer extends AbstractFrontendModule
    * This will update the library list to reflect the results of the 
    * search.
    * 
-   * @param title   The title fragment to include in the search.  
-   *                Can be empty or null.
+   * @param search  The string fragment to use in searches.
+   *                Cannot be empty or null.
    *                
-   * @param artist  The artist fragment to include in the search.
-   *                Can be empty or null.
+   * @throws        EmptySearchException if the search string is 
+   *                empty or null (from LibraryUtils.search).
    */
   
   public void
-  doSearch (String search)
+  doSearch (String search) throws EmptySearchException
   {
     try
       {

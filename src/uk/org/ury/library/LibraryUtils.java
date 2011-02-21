@@ -13,6 +13,7 @@ import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.exceptions.QueryFailureException;
 
 import uk.org.ury.library.LibraryItem.LibraryProperty;
+import uk.org.ury.library.exceptions.EmptySearchException;
 
 
 /**
@@ -33,33 +34,40 @@ public class LibraryUtils
    * @param search  The search fragment to include in the search.
    *                Can be empty or null.
    *                
-   * @throws        IllegalArgumentException if db, title or artist 
+   * @throws        IllegalArgumentException if the search term is 
    *                are null.
    *                
    * @throws        QueryFailureException if the database backend 
    *                yielded an error while executing the search 
    *                query.
    *                
+   * @throws        EmptySearchException if the search term is 
+   *                empty (to be handled as a user error).
+   *                
    * @return        a list of LibraryItems matching the search terms.
    */
   
   public static List<LibraryItem>
   search (DatabaseDriver db, String search)
-  throws QueryFailureException
+  throws QueryFailureException, EmptySearchException
   {
     if (db == null)
       throw new IllegalArgumentException ("Database handle is null.");
 
     if (search == null)
       throw new IllegalArgumentException ("Search string is null.");
+
+    List<LibraryItem> results = new ArrayList<LibraryItem> ();
+    
+    
+    // Return empty set if the search term is null.
     
     if (search.equals(""))
-    	//TODO: Be nicer about this
-      System.exit(1);
+    	throw new EmptySearchException ();
     
     
     ResultSet rs = null;
-    List<LibraryItem> results = new ArrayList<LibraryItem> ();
+
     Object[] params = {"%" + search + "%", "%" + search + "%", "%" + search + "%"};
     
     try

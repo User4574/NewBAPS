@@ -2,7 +2,7 @@
 <panel layout="BorderLayout">
   <hbox constraints="BorderLayout.NORTH" border="EmptyBorder(5,5,5,5)" size="640,32">
     <label text="Search for:" labelfor="searchField" displayedmnemonic="VK_F" 
-      font="Verdana-BOLD-14" />
+     font="Verdana-BOLD-14" />
     <hbox border="EmptyBorder(0,5,0,5)">
       <textfield id="searchField" mnemonic="VK_F" action="search" />
     </hbox>
@@ -14,6 +14,11 @@
     <scrollpane id="resultsPane" constraints="BorderLayout.CENTER">
       <table id="resultsTable" />
     </scrollpane>
+    <panel id="messagePanel" constraints="BorderLayout.CENTER" visible="false"
+     layout="BorderLayout">
+      <label id="messageLabel" text="Searching..." font="Verdana-BOLD-16"
+       constraints="BorderLayout.CENTER" horizontalalignment="CENTER" />
+    </panel>
   </hbox>
 
   <hbox constraints="BorderLayout.SOUTH" border="EmptyBorder(5,5,5,5)">
