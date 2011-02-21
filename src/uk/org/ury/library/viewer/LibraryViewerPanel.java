@@ -99,6 +99,11 @@ public class LibraryViewerPanel extends FrontendPanel
       {
         FrontendError.reportFatal ("UI creation failure: " + e.getMessage (), null);
       }
+    
+    
+    // Fine-tune table
+    
+    resultsTable.setAutoCreateRowSorter (true);
   }
   
   
@@ -194,11 +199,6 @@ public class LibraryViewerPanel extends FrontendPanel
           {
             // Ignore
           }
-        
-        
-          // Force table update with new results.
-  
-          resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
           
           
           /* Re-enable widgets and swap panels according to whether 
@@ -220,6 +220,10 @@ public class LibraryViewerPanel extends FrontendPanel
             }
           else
             {
+              // Force table update with new results.
+              
+              resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
+              
               messagePanel.setVisible (false);
               resultsPane.setVisible (true);            
             }

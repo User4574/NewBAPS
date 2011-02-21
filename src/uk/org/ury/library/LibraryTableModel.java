@@ -49,7 +49,7 @@ public class LibraryTableModel extends AbstractTableModel
   public int
   getColumnCount ()
   {
-    return 5;
+    return 6;
   }
 
   
@@ -73,7 +73,8 @@ public class LibraryTableModel extends AbstractTableModel
   
   @Override
   public Class<?>
-  getColumnClass (int c) {
+  getColumnClass (int c) 
+  {
     return getValueAt (0, c).getClass ();
   }
   
@@ -113,11 +114,26 @@ public class LibraryTableModel extends AbstractTableModel
         else
           return "Unrecognised";
         
-      case 4: // Digitised
+      case 4: // Clean?
+
+        // Return true if marked true, false if marked false or unknown etc.
+        
+        String cleanString = li.get (LibraryProperty.IS_CLEAN); 
+
+        // TODO: Nicer way of showing this
+        
+        if (cleanString.equals ("y"))
+          return "Yes";
+        else if (cleanString.equals ("n"))
+          return "No";
+        else
+          return "???";
+        
+      case 5: // isDigitised
         
         // Return true if marked true, false if marked false or unknown etc.
         
-        String digitisedString = li.get (LibraryProperty.DIGITISED); 
+        String digitisedString = li.get (LibraryProperty.IS_DIGITISED); 
         
         if (digitisedString.equals ("t"))
           return true;
@@ -149,6 +165,8 @@ public class LibraryTableModel extends AbstractTableModel
       case 3:
         return "Medium";
       case 4:
+        return "Clean?";
+      case 5:
         return "On system?";
         
       default:

@@ -43,7 +43,8 @@ public class LibraryItem
     ADD_SURNAME     ("snameadd"),
     EDIT_FORENAME   ("fnameedit"),
     EDIT_SURNAME    ("snameedit"),
-    DIGITISED       ("digitised");
+    IS_DIGITISED    ("digitised"),
+    IS_CLEAN        ("clean");
     
     
     public final String sql;

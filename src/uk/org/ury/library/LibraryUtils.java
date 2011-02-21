@@ -78,7 +78,7 @@ public class LibraryUtils
             + " datereleased, EXTRACT(EPOCH FROM dateadded) as dateadded,"
             + " EXTRACT(EPOCH FROM datetime_lastedit) AS dateedited,"
             + " shelfletter, shelfnumber, cdid, memberid_add, memberid_lastedit,"
-            + " digitised,"
+            + " digitised, clean,"
             + " a.fname AS fnameadd, a.sname AS snameadd, b.fname AS fnameedit, b.sname AS snameedit"
             + " FROM rec_record AS r"
             + " INNER JOIN rec_track AS t ON (r.recordid = t.recordid)"
