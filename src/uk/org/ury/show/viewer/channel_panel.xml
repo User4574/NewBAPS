@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel border="RaisedBevelBorder" size="100,250">
+  <vbox>
+    <hbox>
+      <label id ="channelName"
+       border="EmptyBorder(5,5,5,5)"
+       text="Channel x" font="Verdana-BOLD-14" />
+    </hbox>
+    <scrollpane id="itemScroller">
+      <list id="itemList" />
+    </scrollpane>
+    <hbox>
+      <button id="playButton" text="Play" />
+      <button id="pauseButton" text="Pause" />
+      <button id="stopButton" text="Stop" />
+    </hbox>
+    <hbox>
+      <label text="Name of track" />
+    </hbox>
+    <hbox>
+      <label text="Duration chart" />
+    </hbox>
+    <hbox>
+      <hbox border="EtchedBorder">
+        <vbox border="EmptyBorder(5,5,5,5)">
+          <label text="Elapsed" />
+        </vbox>
+      </hbox>
+      <hbox border="EtchedBorder">
+        <vbox border="EmptyBorder(5,5,5,5)">
+          <label text="Remaining" />
+        </vbox>
+      </hbox>
+    </hbox>
+  </vbox>
+</panel>

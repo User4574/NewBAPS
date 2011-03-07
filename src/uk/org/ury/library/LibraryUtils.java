@@ -12,7 +12,7 @@ import java.util.List;
 import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.exceptions.QueryFailureException;
 
-import uk.org.ury.library.LibraryItem.LibraryProperty;
+import uk.org.ury.library.LibraryItemProperty;
 import uk.org.ury.library.exceptions.EmptySearchException;
 
 
@@ -99,31 +99,49 @@ public class LibraryUtils
       {
         while (rs.next ())
           {
-            // Translate SQL columns into a list of properties.
-            
-            HashMap<LibraryProperty, String> properties = new HashMap<LibraryProperty, String> ();
-            
-            for (LibraryProperty p : LibraryProperty.values ())
-              {
-                try
-                  {
-                    properties.put (p, rs.getString (p.sql));
-                  }
-                catch (SQLException e)
-                  {
-                    // Ignore this, as it is almost certainly just a non-existent 
-                    // property.
-                  }
-              }
-             
-            results.add (new LibraryItem (properties));
+            results.add (translateRow (rs));
           }
       }
     catch (SQLException e)
       { 
         throw new QueryFailureException (e.getMessage ());
       }
-    
+  
     return results;
+  }
+  
+  
+  /**
+   * Translate a row retrieved from the database into a LibraryItem.
+   * 
+   * @param rs  The result-set, or database cursor, pointing to the 
+   *            row to translate.
+   *            
+   * @return    A new LibraryItem containing the properties extracted 
+   *            from the translated row.
+   */
+  
+  private static LibraryItem
+  translateRow (ResultSet rs)
+  {
+    // Translate SQL columns into a list of properties.
+            
+    HashMap<LibraryItemProperty, String> properties = new HashMap<LibraryItemProperty, String> ();
+            
+    for (LibraryItemProperty p : LibraryItemProperty.values ())
+      {
+        try
+          {
+            properties.put (p, rs.getString (p.sql));
+          }
+        catch (SQLException e)
+          {
+            // Ignore this, as it is almost certainly just a non-existent 
+            // property.
+          }
+      }
+    
+  
+    return new LibraryItem (properties);
   }
 }

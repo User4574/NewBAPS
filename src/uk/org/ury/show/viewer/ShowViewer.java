@@ -1,9 +1,6 @@
-package uk.org.ury.library.viewer;
+package uk.org.ury.show.viewer;
 
 import java.lang.reflect.InvocationTargetException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.SwingUtilities;
 
@@ -11,19 +8,29 @@ import uk.org.ury.config.ConfigReader;
 import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.UserClass;
 import uk.org.ury.database.exceptions.MissingCredentialsException;
-import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.frontend.AbstractFrontendModule;
 import uk.org.ury.frontend.FrontendError;
 import uk.org.ury.frontend.FrontendFrame;
 import uk.org.ury.frontend.FrontendMaster;
+import uk.org.ury.frontend.FrontendModule;
 import uk.org.ury.frontend.FrontendModulePanel;
 
-import uk.org.ury.library.LibraryItem;
+import uk.org.ury.show.ShowChannel;
+import uk.org.ury.show.ShowUtils;
 
-import uk.org.ury.library.LibraryUtils;
-import uk.org.ury.library.exceptions.EmptySearchException;
 
-public class LibraryViewer extends AbstractFrontendModule
+/**
+ * Frontend module for viewing show details.
+ * 
+ * This serves as the base for the show playout and editor classes,
+ * but can be used stand-alone as an (admittedly rather pointless) 
+ * module.
+ * 
+ * @author  Matt Windsor
+ *
+ */
+
+public class ShowViewer extends AbstractFrontendModule
 {
   /**
    * 
@@ -31,18 +38,18 @@ public class LibraryViewer extends AbstractFrontendModule
   
   private static final long serialVersionUID = -2782366476480563739L;
   private DatabaseDriver dd;
-  private List<LibraryItem> libraryList;
-  private LibraryViewerPanel panel;
+  private ShowChannel[] channels;
+  private ShowViewerPanel panel;
   private FrontendFrame frame;
   private ConfigReader config;
   
   
   /**
-   * Construct a new LibraryViewer as a frontend object.
+   * Construct a new ShowViewer as a frontend object.
    */
   
   public
-  LibraryViewer ()
+  ShowViewer ()
   {
     try
       {
@@ -54,8 +61,7 @@ public class LibraryViewer extends AbstractFrontendModule
       }
     
     frame = null;
-    libraryList = new ArrayList<LibraryItem> ();
-    panel = null;
+    channels = new ShowChannel[ShowUtils.NUM_CHANNELS];
   }
   
   
@@ -67,8 +73,8 @@ public class LibraryViewer extends AbstractFrontendModule
   init ()
   {
     frame = null;
-    libraryList = new ArrayList<LibraryItem> ();
-    panel = null;
+    channels = new ShowChannel[ShowUtils.NUM_CHANNELS];
+    panel = new ShowViewerPanel (this, null);
     
     
     try
@@ -107,16 +113,17 @@ public class LibraryViewer extends AbstractFrontendModule
   start ()
   {
     frame = null;
-    panel = new LibraryViewerPanel (this, null);
+    panel = new ShowViewerPanel (this, null);
     
     add (panel);
   } 
-
+  
   
   /**
    * Run the library viewer frontend.
    */
   
+  @Override
   public FrontendModulePanel
   runFrontend (FrontendMaster master)
   { 
@@ -136,45 +143,19 @@ public class LibraryViewer extends AbstractFrontendModule
         FrontendError.reportFatal (f.getMessage (), frame);
       }
     
-    panel = new LibraryViewerPanel (this, master);
+    panel = new ShowViewerPanel (this, master);
     return panel;
   }
 
 
   /**
-   * Do a library search.
-   * 
-   * This will update the library list to reflect the results of the 
-   * search.
-   * 
-   * @param search  The string fragment to use in searches.
-   *                Cannot be empty or null.
-   *                
-   * @throws        EmptySearchException if the search string is 
-   *                empty or null (from LibraryUtils.search).
+   * @return  the channel array.
    */
   
-  public void
-  doSearch (String search) throws EmptySearchException
+  public ShowChannel[]
+  getChannels ()
   {
-    try
-      {
-        libraryList = LibraryUtils.search (dd, search);
-      }
-    catch (QueryFailureException e)
-      {
-        FrontendError.reportFatal (e.getMessage (), frame);
-      }
-  }
-
-  
-  /**
-   * @return  the current library list.
-   */
-
-  public List<LibraryItem> 
-  getLibraryList ()
-  {
-    return libraryList;
+    // TODO Auto-generated method stub
+    return channels;
   }
 }

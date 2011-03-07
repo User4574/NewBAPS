@@ -11,7 +11,7 @@ package uk.org.ury.frontend;
  * 
  * - be runnable standalone, as either an application or an applet;
  * 
- * - contain their user interface in a subclass of FrontendPanel 
+ * - contain their user interface in a subclass of FrontendModulePanel 
  *   which can be embedded either in a FrontendFrame, a web page 
  *   or another module;
  *   
@@ -27,5 +27,15 @@ package uk.org.ury.frontend;
 
 public interface FrontendModule
 {
-  // Space for rent
+  /**
+   * Begin execution of the frontend module.
+   * 
+   * @param master   The FrontendMaster driving the frontend.
+   * 
+   * @return        the frontend panel to insert into the 
+   *                FrontendMaster.
+   */
+  
+  public FrontendModulePanel
+  runFrontend (FrontendMaster master);
 }

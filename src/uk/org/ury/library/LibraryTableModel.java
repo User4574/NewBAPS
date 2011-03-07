@@ -7,7 +7,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import uk.org.ury.library.LibraryItem.LibraryProperty;
+import uk.org.ury.database.exceptions.MissingPropertyException;
+import uk.org.ury.library.LibraryItemProperty;
 
 
 /**
@@ -88,60 +89,67 @@ public class LibraryTableModel extends AbstractTableModel
   {
     LibraryItem li = data.get (rowIndex);
     
-    switch (columnIndex)
+    try
+      {    
+        switch (columnIndex)
+          {
+          case 0: // Title
+            return li.get (LibraryItemProperty.TITLE);
+          
+          case 1: // Artist
+            return li.get (LibraryItemProperty.ARTIST);
+            
+          case 2: // Album
+            return li.get (LibraryItemProperty.ALBUM);
+            
+          case 3: // Medium
+            
+            // TODO: Make this less kludge-y
+            
+            String mediumString = li.get (LibraryItemProperty.MEDIUM);
+            
+            if (mediumString.equals ("c"))
+              return "Compact Disc";
+            else if (mediumString.equals ("7"))
+              return "7\" Vinyl";
+            else if (mediumString.equals ("2"))
+              return "12\" Vinyl";
+            else
+              return "Unrecognised";
+            
+          case 4: // Clean?
+    
+            // Return true if marked true, false if marked false or unknown etc.
+            
+            String cleanString = li.get (LibraryItemProperty.IS_CLEAN); 
+    
+            // TODO: Nicer way of showing this
+            
+            if (cleanString.equals ("y"))
+              return "Yes";
+            else if (cleanString.equals ("n"))
+              return "No";
+            else
+              return "???";
+            
+          case 5: // isDigitised
+            
+            // Return true if marked true, false if marked false or unknown etc.
+            
+            String digitisedString = li.get (LibraryItemProperty.IS_DIGITISED); 
+            
+            if (digitisedString.equals ("t"))
+              return true;
+            else
+              return false;
+            
+          default:
+            return "";
+          }
+      }
+    catch (MissingPropertyException e)
       {
-      case 0: // Title
-        return li.get (LibraryProperty.TITLE);
-        
-      case 1: // Artist
-        return li.get (LibraryProperty.ARTIST);
-        
-      case 2: // Album
-        return li.get (LibraryProperty.ALBUM);
-        
-      case 3: // Medium
-        
-        // TODO: Make this less kludge-y
-        
-        String mediumString = li.get (LibraryProperty.MEDIUM);
-        
-        if (mediumString.equals ("c"))
-          return "Compact Disc";
-        else if (mediumString.equals ("7"))
-          return "7\" Vinyl";
-        else if (mediumString.equals ("2"))
-          return "12\" Vinyl";
-        else
-          return "Unrecognised";
-        
-      case 4: // Clean?
-
-        // Return true if marked true, false if marked false or unknown etc.
-        
-        String cleanString = li.get (LibraryProperty.IS_CLEAN); 
-
-        // TODO: Nicer way of showing this
-        
-        if (cleanString.equals ("y"))
-          return "Yes";
-        else if (cleanString.equals ("n"))
-          return "No";
-        else
-          return "???";
-        
-      case 5: // isDigitised
-        
-        // Return true if marked true, false if marked false or unknown etc.
-        
-        String digitisedString = li.get (LibraryProperty.IS_DIGITISED); 
-        
-        if (digitisedString.equals ("t"))
-          return true;
-        else
-          return false;
-        
-      default:
-        return "";
+        return "Unknown";
       }
   }
   

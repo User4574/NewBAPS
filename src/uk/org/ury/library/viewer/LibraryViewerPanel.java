@@ -4,10 +4,10 @@
 package uk.org.ury.library.viewer;
 
 
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,11 +15,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
-import org.swixml.SwingEngine;
-
-import uk.org.ury.frontend.FrontendError;
-import uk.org.ury.frontend.FrontendPanel;
-import uk.org.ury.frontend.HintField;
+import uk.org.ury.frontend.FrontendMaster;
+import uk.org.ury.frontend.FrontendModulePanel;
 import uk.org.ury.library.LibraryTableModel;
 import uk.org.ury.library.exceptions.EmptySearchException;
 
@@ -30,25 +27,21 @@ import uk.org.ury.library.exceptions.EmptySearchException;
  * @author Matt Windsor, Nathan Lasseter
  */
 
-public class LibraryViewerPanel extends FrontendPanel
+public class LibraryViewerPanel extends FrontendModulePanel
 {
   /**
    * 
    */
   private static final long serialVersionUID = -2441616418398056712L;
- 
-
-  /* Controller of this panel. */
-  
-  private LibraryViewer master;
   
   
   /* Panel widgets exposed by the SwiXML user interface. */
   
   private JTable resultsTable;
   private JScrollPane resultsPane;
-  private JPanel messagePanel;
+  private JPanel messagePanel; 
   private JLabel messageLabel;
+  private JPanel searchingPanel;
   private JTextField searchField;
   private JButton searchButton;
   
@@ -57,49 +50,28 @@ public class LibraryViewerPanel extends FrontendPanel
    * letting the user know what happened.
    */
   
-  private String searchFailureMessage = "ALEX!";
+  private String searchFailureMessage = "Unknown error.";
+
   
   
   /**
    * Construct a new LibraryViewerPanel.
    * 
-   * @param inMaster  The LibraryViewer controlling this LibraryViewerPanel.
+   * @param viewer  The LibraryViewer controlling this LibraryViewerPanel.
+   * 
+   * @param master   The FrontendMaster driving the frontend.
    */
   
   public
-  LibraryViewerPanel (LibraryViewer inMaster)
+  LibraryViewerPanel (LibraryViewer viewer, FrontendMaster master)
   {
-    super ();
-    
-    master = inMaster;
-   
-    
-    URL path = getClass ().getResource ("library_viewer_gui.xml");
-    
-    if (path == null)
-      throw new IllegalArgumentException ("XML file does not exist.");
-  
-    SwingEngine se = new SwingEngine (this);
-    se.getTaglib ().registerTag ("hint", HintField.class);
-    
-    
+    super (viewer, "library_viewer_gui.xml", master);
+ 
     /* The UI implementation is contained in library_viewer_gui.xml.
      *
-     * It is hooked into the object resultsTable and the action 
-     * method search.
-     * 
-     * See the XML file for more details.
+     * See this file for more details.
      */
-    
-    try
-      {
-        se.insert (path, this);
-      }
-    catch (Exception e)
-      {
-        FrontendError.reportFatal ("UI creation failure: " + e.getMessage (), null);
-      }
-    
+
     
     // Fine-tune table
     
@@ -110,7 +82,7 @@ public class LibraryViewerPanel extends FrontendPanel
   /**
    * @return  the name of the panel.
    * 
-   * @see     uk.org.ury.frontend.FrontendPanel#getName()
+   * @see     uk.org.ury.frontend.FrontendModulePanel#getName()
    */
   
   @Override
@@ -143,8 +115,10 @@ public class LibraryViewerPanel extends FrontendPanel
     searchField.setEnabled (false);
     searchButton.setEnabled (false);
     resultsPane.setVisible (false);
-    messageLabel.setText ("Searching...");
-    messagePanel.setVisible (true);
+    messagePanel.setVisible (false);
+    searchingPanel.setVisible (true);
+    
+    final LibraryViewer master = (LibraryViewer) getModule ();
     
     
     SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void> ()
@@ -207,16 +181,18 @@ public class LibraryViewerPanel extends FrontendPanel
           
           searchField.setEnabled (true);
           searchButton.setEnabled (true);
-          messagePanel.setVisible (true);
+          searchingPanel.setVisible (false);
           
           if (hasSucceeded == false)
             {
               messageLabel.setText (searchFailureMessage);
+              messagePanel.setVisible (true);
             }
           else if (master.getLibraryList ().size () == 0)
             {
               messageLabel.setText ("Sorry, but no results were "
                                     + "found for that term.");
+              messagePanel.setVisible (true);
             }
           else
             {

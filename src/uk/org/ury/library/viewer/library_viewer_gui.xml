@@ -7,13 +7,20 @@
       <textfield id="searchField" mnemonic="VK_F" action="search" />
     </hbox>
     <button id="searchButton" text="Search" mnemonic="VK_S" action="search" 
-      font="Verdana-BOLD-14" />
+     font="Verdana-BOLD-14" />
   </hbox>
 
   <hbox constraints="BorderLayout.CENTER" border="EmptyBorder(0,5,0,5)">
     <scrollpane id="resultsPane" constraints="BorderLayout.CENTER">
       <table id="resultsTable" />
     </scrollpane>
+    <panel id="searchingPanel" constraints="BorderLayout.CENTER" visible="false"
+     layout="BorderLayout">
+      <label id="searchingLabel" text="Searching..." font="Verdana-BOLD-16"
+       constraints="BorderLayout.CENTER" horizontalalignment="CENTER" />
+      <progressbar id="searchingProgressBar" indeterminate="true" 
+       constraints="BorderLayout.SOUTH" />
+    </panel>
     <panel id="messagePanel" constraints="BorderLayout.CENTER" visible="false"
      layout="BorderLayout">
       <label id="messageLabel" text="Searching..." font="Verdana-BOLD-16"

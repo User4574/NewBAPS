@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel layout="BorderLayout">
+  <hbox constraints="BorderLayout.NORTH" border="EmptyBorder(5,5,5,5)" size="640,32">
+    <button id="loadButton" text="Load Show or Template..." mnemonic="VK_L"
+      action="load"
+      font="Verdana-BOLD-14" />
+    <button id="searchButton" text="Search Record Library" mnemonic="VK_S" 
+      action="search" 
+      font="Verdana-BOLD-14" />
+  </hbox>
+
+  <splitpane constraints="BorderLayout.CENTER" border="EmptyBorder(0,5,0,5)"
+   orientation="0">
+    <scrollpane id="binScrollPane">
+      <label text="Bins will go here." />
+    </scrollpane>
+    <scrollpane id="channelScrollPane">
+      <panel id="channelGroupPanel" />
+    </scrollpane>
+  </splitpane>
+
+  <hbox constraints="BorderLayout.SOUTH" border="EmptyBorder(5,5,5,5)">
+    <hint text="Hint goes here." />
+  </hbox>
+</panel>

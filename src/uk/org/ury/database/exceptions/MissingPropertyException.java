@@ -5,13 +5,15 @@ package uk.org.ury.database.exceptions;
 
 
 /**
- * Exception thrown when the database backend fails to execute
- * a query.
+ * Exception thrown when a DatabaseItem is queried for a property
+ * that does not exist.
+ * 
+ * This is (usually) not a fatal error.
  * 
  * @author Matt Windsor
  */
 
-public class QueryFailureException extends Exception
+public class MissingPropertyException extends Exception
 {
  /**
    * 
@@ -20,25 +22,25 @@ public class QueryFailureException extends Exception
 
 
 /**
-  * Construct a new QueryFailureException with a 
+  * Construct a new MissingPropertyException with a 
   * default reason.
   */
  
  public
- QueryFailureException ()
+ MissingPropertyException ()
  {
    super ("Query failure.");
  }
  
  
  /**
-  * Construct a new QueryFailureException.
+  * Construct a new MissingPropertyException.
   * 
   * @param reason  The explanation for the exception.
   */
  
  public
- QueryFailureException (String reason)
+ MissingPropertyException (String reason)
  {
    super (reason);
  }

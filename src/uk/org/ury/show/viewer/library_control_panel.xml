@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel>
+  <hbox border="EmptyBorder(0,5,5,5)" size="640,32">
+    <button id="backButton" text="Back to Show" mnemonic="VK_B" action="back" 
+      font="Verdana-BOLD-14" />
+    <button id="c1Button" text="Add to Channel 1" mnemonic="VK_1" action="addch1" 
+      font="Verdana-BOLD-14" />
+    <button id="c2Button" text="Add to Channel 2" mnemonic="VK_2" action="addch2" 
+      font="Verdana-BOLD-14" />
+    <button id="c3Button" text="Add to Channel 3" mnemonic="VK_3" action="addch3" 
+      font="Verdana-BOLD-14" />
+  </hbox>
+</panel>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel>
+  <hbox border="EmptyBorder(0,5,5,5)" size="640,32">
+    <button id="backButton" text="Back to Demo Menu" mnemonic="VK_B" action="back" 
+      font="Verdana-BOLD-14" />
+    <button id="aboutButton" text="About..." mnemonic="VK_A" action="about" 
+      font="Verdana-BOLD-14" />
+  </hbox>
+</panel>
