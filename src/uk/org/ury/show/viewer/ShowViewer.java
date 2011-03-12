@@ -12,7 +12,6 @@ import uk.org.ury.frontend.AbstractFrontendModule;
 import uk.org.ury.frontend.FrontendError;
 import uk.org.ury.frontend.FrontendFrame;
 import uk.org.ury.frontend.FrontendMaster;
-import uk.org.ury.frontend.FrontendModule;
 import uk.org.ury.frontend.FrontendModulePanel;
 
 import uk.org.ury.show.ShowChannel;

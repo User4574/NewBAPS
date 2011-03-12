@@ -2,24 +2,49 @@
 <panel layout="BorderLayout">
   <hbox constraints="BorderLayout.NORTH" border="EmptyBorder(5,5,5,5)" size="640,32">
     <button id="loadButton" text="Load Show or Template..." mnemonic="VK_L"
-      action="load"
-      font="Verdana-BOLD-14" />
+     action="load"
+     font="Verdana-BOLD-14" />
     <button id="searchButton" text="Search Record Library" mnemonic="VK_S" 
-      action="search" 
-      font="Verdana-BOLD-14" />
+     action="search" 
+     font="Verdana-BOLD-14" />
+    <glue />
+    <button id="helpButton" text="Help..." mnemonic="VK_H" 
+     action="help"
+     font="Verdana-BOLD-14" />
+    <button id="feedbackButton" text="Feedback..." mnemonic="VK_F" 
+     action="feedback"
+     font="Verdana-BOLD-14" />
   </hbox>
 
   <splitpane constraints="BorderLayout.CENTER" border="EmptyBorder(0,5,0,5)"
-   orientation="0">
-    <scrollpane id="binScrollPane">
-      <label text="Bins will go here." />
-    </scrollpane>
-    <scrollpane id="channelScrollPane">
-      <panel id="channelGroupPanel" />
-    </scrollpane>
+   id="mainSplit" orientation="0" dividerlocation="400">
+    <splitpane orientation="0" size="640,340" id="binSplit" dividerlocation="100">
+      <panel layout="BorderLayout">
+        <subbanner text="Useful Tracks" 
+         constraints="BorderLayout.NORTH" />
+        <scrollpane id="binScrollPane" size="640,150"
+         constraints="BorderLayout.CENTER">
+          <panel id="binGroupPanel" />
+        </scrollpane>
+      </panel>
+      <panel layout="BorderLayout">
+        <subbanner text="Sound Channels" 
+         constraints="BorderLayout.NORTH" />
+        <scrollpane id="channelScrollPane" size="640,360"
+         constraints="BorderLayout.CENTER">
+          <panel id="channelGroupPanel" />
+        </scrollpane>
+      </panel>
+    </splitpane>
+    <panel layout="BorderLayout">
+      <subbanner text="Quick Notes"
+       constraints="BorderLayout.NORTH" />
+      <textarea id="noteArea" size="640,100" border="LoweredBevelBorder"
+       text="Type quick notes here..." />
+    </panel>
   </splitpane>
 
   <hbox constraints="BorderLayout.SOUTH" border="EmptyBorder(5,5,5,5)">
-    <hint text="Hint goes here." />
+    <hint text="For help, click the Help button." />
   </hbox>
 </panel>

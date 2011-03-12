@@ -11,11 +11,11 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.ListModel;
 
 import org.swixml.SwingEngine;
 
 import uk.org.ury.frontend.FrontendError;
+import uk.org.ury.frontend.FrontendSubBanner;
 import uk.org.ury.show.ShowChannel;
 
 
@@ -59,7 +59,7 @@ public class ChannelPanel extends JPanel
       FrontendError.reportFatal ("UI creation failure: XML layout does not exist.", null);
   
     SwingEngine se = new SwingEngine (this);
-    
+    se.getTaglib ().registerTag ("subbanner", FrontendSubBanner.class);
     
    // Read the XML.
     
@@ -74,20 +74,20 @@ public class ChannelPanel extends JPanel
     
     // Tweak buttons to add function key mnemonics, if function keys are available.
     
-    if (number <= 4)
+    if (number <= 3)
       {
-        int base = number * 3;
+        int base = (number - 1) * 4;
         
-        playButton.setText      ("Play (F"      + (base - 2) + ")");
-        playButton.setMnemonic  (KeyEvent.VK_F1 + (base - 1));
+        playButton.setText      ("Play (F"      + (base + 1) + ")");
+        playButton.setMnemonic  (KeyEvent.VK_F1 + (base    ));
         playButton.setDisplayedMnemonicIndex (7);
         
-        pauseButton.setText     ("Stop (F"      + (base - 1) + ")");
-        pauseButton.setMnemonic (KeyEvent.VK_F2 + (base - 1));
+        pauseButton.setText     ("Stop (F"      + (base + 2) + ")");
+        pauseButton.setMnemonic (KeyEvent.VK_F2 + (base    ));
         pauseButton.setDisplayedMnemonicIndex (7);
         
-        stopButton.setText      ("Pause (F"     + (base    ) + ")");
-        stopButton.setMnemonic  (KeyEvent.VK_F3 + (base - 1));
+        stopButton.setText      ("Pause (F"     + (base + 3) + ")");
+        stopButton.setMnemonic  (KeyEvent.VK_F3 + (base    ));
         stopButton.setDisplayedMnemonicIndex (8);
       }
       

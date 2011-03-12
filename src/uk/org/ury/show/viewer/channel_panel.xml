@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<panel border="RaisedBevelBorder" size="100,250">
-  <vbox>
-    <hbox>
-      <label id ="channelName"
-       border="EmptyBorder(5,5,5,5)"
-       text="Channel x" font="Verdana-BOLD-14" />
-    </hbox>
-    <scrollpane id="itemScroller">
+<panel border="EmptyBorder(5,5,5,5)" layout="BorderLayout">
+  <subbanner id="channelName" text="Channel x"
+   constraints="BorderLayout.NORTH" />
+  <vbox constraints="BorderLayout.CENTER">
+    <scrollpane id="itemScroller" constraints="BorderLayout.CENTER">
       <list id="itemList" />
-    </scrollpane>
-    <hbox>
+  </scrollpane>
+  </vbox>
+  <vbox constraints="BorderLayout.SOUTH">
+    <panel layout="GridLayout(1,3)">
       <button id="playButton" text="Play" />
       <button id="pauseButton" text="Pause" />
       <button id="stopButton" text="Stop" />
-    </hbox>
-    <hbox>
+    </panel>
+    <panel layout="GridLayout(3, 1)">
       <label text="Name of track" />
-    </hbox>
-    <hbox>
-      <label text="Duration chart" />
-    </hbox>
-    <hbox>
       <hbox border="EtchedBorder">
-        <vbox border="EmptyBorder(5,5,5,5)">
-          <label text="Elapsed" />
-        </vbox>
+        <label text="Duration chart" />
       </hbox>
-      <hbox border="EtchedBorder">
-        <vbox border="EmptyBorder(5,5,5,5)">
-          <label text="Remaining" />
-        </vbox>
+      <hbox>
+        <glue />
+        <hbox border="EmptyBorder(5,5,5,5)">
+          <label text="Elapsed: " />
+          <label text="0:00:00" font="Verdana-BOLD-14" />
+        </hbox>
+        <glue />
+        <hbox border="EmptyBorder(5,5,5,5)">
+          <label text="Remaining: " />
+          <label text="0:00:00" font="Verdana-BOLD-14" />
+        </hbox>
+        <glue />
       </hbox>
-    </hbox>
+    </panel>
   </vbox>
 </panel>

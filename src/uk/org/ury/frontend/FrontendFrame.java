@@ -8,6 +8,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * A frame that hosts a FrontendModulePanel, used for serving frontend 
@@ -33,6 +35,28 @@ public class FrontendFrame extends JFrame implements FrontendMaster
   FrontendFrame (FrontendModulePanel parent)
   {
     super (parent.getName ());
+   
+    try
+      {
+        // Set System L&F
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName ());
+      } 
+    catch (UnsupportedLookAndFeelException e)
+      {
+       // handle exception
+      }
+    catch (ClassNotFoundException e)
+      {
+       // handle exception
+      }
+    catch (InstantiationException e)
+      {
+       // handle exception
+      }
+    catch (IllegalAccessException e)
+      {
+       // handle exception
+      }
     
     setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
     
@@ -49,7 +73,8 @@ public class FrontendFrame extends JFrame implements FrontendMaster
     cp.add (banner, BorderLayout.NORTH);
     cp.add (parent, BorderLayout.CENTER);
     
-    setPreferredSize (new Dimension (640, 480));
+    setPreferredSize (new Dimension (800, 600));
+    setMinimumSize (new Dimension (800, 600));
     
     pack ();
     setVisible (true);

@@ -3,8 +3,10 @@
  */
 package uk.org.ury.show.viewer;
 
-import javax.swing.JButton;
+import java.awt.GridLayout;
+
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 import uk.org.ury.frontend.FrontendMaster;
 import uk.org.ury.frontend.FrontendModulePanel;
@@ -23,11 +25,14 @@ public class ShowViewerPanel extends FrontendModulePanel
    * 
    */
   private static final long serialVersionUID = -2441616418398056712L;
-  
-  private JPanel channelGroupPanel;
+ 
   
   /* Panel widgets exposed by the SwiXML user interface. */
   
+  private JSplitPane mainSplit;
+  private JSplitPane binSplit;
+  private JPanel channelGroupPanel;
+  private JPanel binGroupPanel; 
   
   /**
    * Construct a new ShowViewerPanel.
@@ -52,6 +57,22 @@ public class ShowViewerPanel extends FrontendModulePanel
         channelGroupPanel.add (cp);
         channelNumber++;
       }
+    
+    channelGroupPanel.setLayout (new GridLayout (1, channelNumber - 1));
+    
+    
+    // TEST
+    String binNames[] = {"Jingles", "Beds", "Adverts"};
+    TrackBin tb;
+    
+    for (String name : binNames)
+      {
+        tb = new TrackBin (name);
+        
+        binGroupPanel.add (tb);
+      }
+    
+    binGroupPanel.setLayout (new GridLayout (1, 3));
   }
   
   

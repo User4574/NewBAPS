@@ -74,6 +74,7 @@ public class FrontendPanel extends JPanel
    // Custom UI element tag registration.
    
    se.getTaglib ().registerTag ("hint", HintField.class);
+   se.getTaglib ().registerTag ("subbanner", FrontendSubBanner.class);
    
    
    // Read the XML.

@@ -7,7 +7,6 @@ package uk.org.ury.library.viewer;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
