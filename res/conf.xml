@@ -13,10 +13,10 @@
 		<port>5432</port>
 		<db>membership</db>
 	</database>
-	
+
 	<auth>
-		<user>xauth</user>
-		<pass>rCtVyBuN</pass>
+		<user>bapsserver</user>
+		<pass>Bap553rv3r</pass>
 		<type>read_only</type>
 	</auth>
 	

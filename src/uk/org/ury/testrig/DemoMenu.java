@@ -1,13 +1,9 @@
 package uk.org.ury.testrig;
 
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-
-import uk.org.ury.frontend.FrontendFrame;
+import uk.org.ury.frontend.AbstractFrontendModule;
+import uk.org.ury.frontend.FrontendMaster;
 import uk.org.ury.frontend.FrontendModulePanel;
+import uk.org.ury.frontend.exceptions.LoadFailureException;
 
 
 /**
@@ -17,23 +13,13 @@ import uk.org.ury.frontend.FrontendModulePanel;
  *
  */
 
-public class DemoMenu
+public class DemoMenu extends AbstractFrontendModule
 {
-  private FrontendFrame frame;
-  
   /**
-   * Main method.
    * 
-   * @param args  The command-line arguments to the program.  These 
-   *              will be ignored.
    */
-  
-  public static void
-  main (String[] args)
-  {
-    DemoMenu dm = new DemoMenu ();
-    dm.run ();
-  }
+  private static final long serialVersionUID = -5264235507636809476L;
+  private FrontendMaster master;
   
   
   /**
@@ -43,8 +29,16 @@ public class DemoMenu
   public void
   loadModule (String module)
   {
-    frame.loadModule (module, "testrig.DemoControlPanel");
+    try
+      {
+        master.loadModule (module, "testrig.DemoControlPanel");
+      }
+    catch (LoadFailureException e)
+      {
+        master.fatalError (e.getMessage ());
+      }
   }
+  
   
   /**
    * Run the demo menu, creating a user interface.
@@ -52,61 +46,19 @@ public class DemoMenu
   
   public void
   run ()
+  { 
+
+  }
+
+  
+  /**
+   * Run the demo menu in frontend mode.
+   */
+
+  @Override
+  public FrontendModulePanel
+  runFrontend (FrontendMaster master)
   {
-    FrontendModulePanel panel = new FrontendModulePanel (null, frame)
-    {
-      private static final long serialVersionUID = 1L;
-      
-      {
-        setLayout (new GridLayout (2, 1));
-        
-        JButton lb = new JButton ("Library Viewer Demo");
-        JButton sb = new JButton ("Show Viewer Demo");
-        
-        lb.addActionListener (new ActionListener ()
-        {
-
-          @Override
-          public void
-          actionPerformed (ActionEvent arg0)
-          {
-            loadModule ("library.viewer.LibraryViewer");
-          }
-          
-        });
-        
-        
-        sb.addActionListener (new ActionListener ()
-        {
-
-          @Override
-          public void
-          actionPerformed (ActionEvent arg0)
-          {
-            loadModule ("show.viewer.ShowViewer");
-          }
-          
-        });
-        
-        
-        add (lb);
-        add (sb);
-      }
-
-      
-      /**
-       * @return  the name of the module.
-       */
-      
-      @Override
-      public String
-      getName ()
-      {
-        return "Demo Menu";
-      }
-    };
-    
-    
-    frame = new FrontendFrame (panel);
+    return new DemoMenuPanel (master);
   }
 }

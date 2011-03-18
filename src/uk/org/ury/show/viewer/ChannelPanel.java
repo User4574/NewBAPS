@@ -4,29 +4,32 @@
 package uk.org.ury.show.viewer;
 
 import java.awt.event.KeyEvent;
-import java.net.URL;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 
-import org.swixml.SwingEngine;
-
-import uk.org.ury.frontend.FrontendError;
-import uk.org.ury.frontend.FrontendSubBanner;
+import uk.org.ury.frontend.FrontendPanel;
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
 import uk.org.ury.show.ShowChannel;
 
 
 /**
- * A panel displaying channel informstion.
+ * A panel displaying channel information.
  * 
  * @author  Matt Windsor.
  */
 
-public class ChannelPanel extends JPanel
+public class ChannelPanel extends FrontendPanel
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 897125684384350966L;
+
+
+  /* Components created and exposed by the XML engine. */
+
   private JLabel channelName;
   private JList itemList;
   private JButton playButton;
@@ -44,33 +47,16 @@ public class ChannelPanel extends JPanel
    * @param number   The number of the channel.
    * 
    * @param channel  The channel whose data the ChannelPanel is viewing.
+   * 
+   * @throws         UICreationFailureException if the UI creation fails.
    */
   
   public
   ChannelPanel (int number, ShowChannel channel)
+  throws UICreationFailureException
   {
-    super ();
-    
-    // Acquire path.
-    
-    URL path = getClass ().getResource ("channel_panel.xml");
-    
-    if (path == null)
-      FrontendError.reportFatal ("UI creation failure: XML layout does not exist.", null);
-  
-    SwingEngine se = new SwingEngine (this);
-    se.getTaglib ().registerTag ("subbanner", FrontendSubBanner.class);
-    
-   // Read the XML.
-    
-    try
-      {
-        se.insert (path, this);
-      }
-    catch (Exception e)
-      {
-        FrontendError.reportFatal ("UI creation failure: " + e.getMessage (), null);
-      }
+    super ("channel_panel.xml", null);
+
     
     // Tweak buttons to add function key mnemonics, if function keys are available.
     
@@ -92,9 +78,7 @@ public class ChannelPanel extends JPanel
       }
       
     // Test stuff
-    DefaultListModel test = new DefaultListModel ();
-    test.add (0, "Test");
-    itemList.setModel (test);
+    itemList.setModel (channel);
     channelName.setText ("Channel " + number);
   }
 }

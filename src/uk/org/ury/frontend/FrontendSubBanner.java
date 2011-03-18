@@ -2,7 +2,6 @@ package uk.org.ury.frontend;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
 
@@ -15,6 +14,10 @@ import javax.swing.UIManager;
 
 public class FrontendSubBanner extends JLabel
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 7843563245601622086L;
   private static final String TITLE_PREFIX = "<html><b>";
   private static final String TITLE_SUFFIX = "</b></html>";
   

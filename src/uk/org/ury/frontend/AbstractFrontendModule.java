@@ -1,6 +1,5 @@
 package uk.org.ury.frontend;
 
-import javax.swing.JApplet;
 
 /**
  * An abstract implementation of the FrontendModule interface.
@@ -9,7 +8,7 @@ import javax.swing.JApplet;
  *
  */
 
-public abstract class AbstractFrontendModule extends JApplet implements FrontendModule
+public abstract class AbstractFrontendModule implements FrontendModule
 {
 
   /**
@@ -17,11 +16,5 @@ public abstract class AbstractFrontendModule extends JApplet implements Frontend
    */
   private static final long serialVersionUID = 5309585577127763538L;
   
-  
-  /**
-   * Initialise the module as an applet.
-   */
-  
-  public abstract void
-  init ();
+  /* Space for rent */
 }

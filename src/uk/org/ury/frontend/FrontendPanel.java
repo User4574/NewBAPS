@@ -6,10 +6,17 @@ import javax.swing.JPanel;
 
 import org.swixml.SwingEngine;
 
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
+
 
 /**
  * An extension of JPanel providing common functionality for user 
  * interface panels in the URY system frontend.
+ * 
+ * Most notably, this includes automated access to XML-based 
+ * preparation of the user interface provided by the panel, 
+ * using an appropriate constructor call giving the XML file from 
+ * which the user interface form should be read.
  * 
  * @author  Matt Windsor
  *
@@ -27,7 +34,9 @@ public class FrontendPanel extends JPanel
   /**
    * Construct a new, blank FrontendPanel.
    * 
-   * @param master   The FrontendMaster driving the frontend.
+   * @param master   The FrontendMaster driving the frontend, if any.
+   *                 For direct instantiations of this class,
+   *                 providing null here is guaranteed to be safe.
    */
   
   public
@@ -43,17 +52,22 @@ public class FrontendPanel extends JPanel
    * Construct a new FrontendPanel from an XML layout.
    *
    * This is the preferred means of constructing FrontendPanels, and 
-   * uses SWIXml to construct the panel layout.
+   * uses an XML-based engine to construct the panel layout.
    * 
    * @param xmlPath  The path, relative from this source file, to the
    *                 XML file from which this panel will read its 
    *                 layout.
    *                 
-   * @param master   The FrontendMaster driving the frontend.
+   * @param master   The FrontendMaster driving the frontend, if any.
+   *                 For direct instantiations of this class,
+   *                 providing null here is guaranteed to be safe.
+   * 
+   * @throws         UICreationFailureException if the UI creation fails.
    */
  
   public
   FrontendPanel (String xmlPath, FrontendMaster master)
+  throws UICreationFailureException
   {
    super ();
 
@@ -65,8 +79,10 @@ public class FrontendPanel extends JPanel
    URL path = getClass ().getResource (xmlPath);
    
    if (path == null)
-     FrontendError.reportFatal ("UI creation failure: XML layout "
-                                + xmlPath + " does not exist.", null);
+     throw new UICreationFailureException ("UI creation failure:" 
+                                           + "XML layout "
+                                           + xmlPath
+                                           + " does not exist.");
  
    SwingEngine se = new SwingEngine (this);
    
@@ -85,7 +101,21 @@ public class FrontendPanel extends JPanel
      }
    catch (Exception e)
      {
-       FrontendError.reportFatal ("UI creation failure: " + e.getMessage (), null);
+       throw new UICreationFailureException ("UI creation failure: "
+                                             + e.getMessage ());
      }
+  }
+  
+  
+  /**
+   * Set the frontend master.
+   * 
+   * @param master  The new frontend master to use.
+   */
+  
+  public void
+  setMaster (FrontendMaster master)
+  {
+    this.master = master;
   }
 }

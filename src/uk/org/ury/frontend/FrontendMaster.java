@@ -3,6 +3,8 @@
  */
 package uk.org.ury.frontend;
 
+import uk.org.ury.frontend.exceptions.LoadFailureException;
+
 
 /**
  * Interface for classes providing the parent unit of a frontend 
@@ -24,10 +26,15 @@ public interface FrontendMaster
    * 
    * @param moduleName  The fully qualified class-name of the module,
    *                    minus the leading "uk.org.ury." domain.
+   *                    
+   * @throws            LoadFailureException if the class is 
+   *                    not found, or is not an implementor of 
+   *                    FrontendModule.
    */
   
   public void
-  loadModule (String moduleName);
+  loadModule (String moduleName)
+  throws LoadFailureException;
 
   
   /**
@@ -40,13 +47,18 @@ public interface FrontendMaster
    * @param moduleName  The fully qualified class-name of the module,
    *                    minus the leading "uk.org.ury." domain.
    *                 
-   * @param cpanelName  The fully qualified class-name of the control
+   * @param cPanelName  The fully qualified class-name of the control
    *                    panel to install, minus the leading 
    *                    "uk.org.ury." domain.
+   *                    
+   * @throws            LoadFailureException if the class is 
+   *                    not found, or is not an implementor of 
+   *                    FrontendModule.
    */
   
   public void 
-  loadModule (String moduleName, String cPanelName);
+  loadModule (String moduleName, String cPanelName)
+  throws LoadFailureException;
   
   
   /**
@@ -62,4 +74,31 @@ public interface FrontendMaster
   
   public void
   restoreModule (FrontendModulePanel mpanel, FrontendControlPanel cpanel);
+  
+  
+  /**
+   * Report a fatal error,
+   * 
+   * @param message  The message, eg the exception message, to report
+   *                 to the user.
+   */
+  
+  public void
+  fatalError (String message);
+  
+  
+  /**
+   * Set up the frontend master's user interface.
+   */
+  
+  public void
+  setupUI ();
+  
+  
+  /**
+   * @return  the resource directory.
+   */
+  
+  public String
+  getResourceDirectory ();
 }

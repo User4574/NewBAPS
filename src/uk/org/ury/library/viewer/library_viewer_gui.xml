@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel layout="BorderLayout">
-  <hbox constraints="BorderLayout.NORTH" border="EmptyBorder(5,5,5,5)" size="640,32">
-    <label text="Search for:" labelfor="searchField" displayedmnemonic="VK_F" 
-     font="Verdana-BOLD-14" />
+  <hbox constraints="BorderLayout.NORTH" border="EmptyBorder(5,5,5,5)">
+    <label text="Search for:" labelfor="searchField" displayedmnemonic="VK_F" />
     <hbox border="EmptyBorder(0,5,0,5)">
       <textfield id="searchField" mnemonic="VK_F" action="search" />
     </hbox>
-    <button id="searchButton" text="Search" mnemonic="VK_S" action="search" 
-     font="Verdana-BOLD-14" />
+    <button id="searchButton" text="Search" mnemonic="VK_S" action="search" />
   </hbox>
 
   <hbox constraints="BorderLayout.CENTER" border="EmptyBorder(0,5,0,5)">
@@ -16,14 +14,14 @@
     </scrollpane>
     <panel id="searchingPanel" constraints="BorderLayout.CENTER" visible="false"
      layout="BorderLayout">
-      <label id="searchingLabel" text="Searching..." font="Verdana-BOLD-16"
+      <label id="searchingLabel" text="Searching..."
        constraints="BorderLayout.CENTER" horizontalalignment="CENTER" />
       <progressbar id="searchingProgressBar" indeterminate="true" 
        constraints="BorderLayout.SOUTH" />
     </panel>
     <panel id="messagePanel" constraints="BorderLayout.CENTER" visible="false"
      layout="BorderLayout">
-      <label id="messageLabel" text="Searching..." font="Verdana-BOLD-16"
+      <label id="messageLabel" text="You shouldn't see this."
        constraints="BorderLayout.CENTER" horizontalalignment="CENTER" />
     </panel>
   </hbox>

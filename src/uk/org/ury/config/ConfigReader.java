@@ -1,7 +1,5 @@
 package uk.org.ury.config;
 
-import java.io.File;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -54,7 +52,7 @@ public class ConfigReader {
 		try {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse (new File(configFile));
+			Document doc = docBuilder.parse (configFile);
 			doc.getDocumentElement().normalize();
 						
 			NodeList nList = doc.getElementsByTagName("auth");

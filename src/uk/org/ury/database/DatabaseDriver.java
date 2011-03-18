@@ -35,7 +35,8 @@ public class DatabaseDriver
    * Construct a new DatabaseDriver with the given user class.
    * 
    * @param config	   The config with login details.
-   * @param userclass  The user class to log in to the database with.
+   * 
+   * @param type       The user class to log in to the database with.
    * 
    * @throws           IllegalArgumentException if the user class is 
    *                   not supported (this should not happen).
@@ -49,7 +50,8 @@ public class DatabaseDriver
    */
   
   public
-  DatabaseDriver (ConfigReader config, UserClass type) throws MissingCredentialsException, ConnectionFailureException
+  DatabaseDriver (ConfigReader config, UserClass type)
+  throws MissingCredentialsException, ConnectionFailureException
   { 
     try
       {
@@ -73,7 +75,8 @@ public class DatabaseDriver
    */
   
   private void
-  connect (ConfigReader config, UserClass type) throws SQLException
+  connect (ConfigReader config, UserClass type)
+  throws SQLException
   {
     if (config == null)
       throw new IllegalArgumentException ("Supplied null config.");
@@ -113,23 +116,18 @@ public class DatabaseDriver
    * @param fetchSize  The maximum number of query rows to return.
    * 
    * @return           the JDBC results set.
+   * 
+   * @throws           SQLException if a SQL error occurs.
    */
   
   public ResultSet
   executeQuery (String sql, int fetchSize)
+  throws SQLException
   {
-    try 
-      {
-        Statement st = conn.createStatement ();
-        st.setFetchSize (fetchSize);
+    Statement st = conn.createStatement ();
+    st.setFetchSize (fetchSize);
         
-        return st.executeQuery (sql);
-      }
-    catch (SQLException e)
-      {
-        e.printStackTrace ();
-        return null;
-      }
+    return st.executeQuery (sql);
   }
 
   
@@ -154,7 +152,8 @@ public class DatabaseDriver
    */
 
   public ResultSet
-  executeQuery (String sql, Object[] params, int fetchSize) throws SQLException
+  executeQuery (String sql, Object[] params, int fetchSize)
+  throws SQLException
   {
     PreparedStatement st = conn.prepareStatement (sql);
     

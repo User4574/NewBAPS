@@ -3,6 +3,10 @@ package uk.org.ury.show;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractListModel;
+
+import uk.org.ury.show.item.ShowItem;
+
 
 /**
  * A channel of ShowItems in a show.
@@ -10,8 +14,13 @@ import java.util.List;
  * @author  Matt Windsor
  */
 
-public class ShowChannel
+public class ShowChannel extends AbstractListModel
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -4651104185166068150L;
+  
   /* Items enqueued in channel. */
   private List<ShowItem> items;
   
@@ -50,6 +59,7 @@ public class ShowChannel
                                           " out of bounds.");
     
     items.add (index, item);
+    fireIntervalAdded (this, index, index);
   }
   
   
@@ -66,6 +76,7 @@ public class ShowChannel
       throw new IllegalArgumentException ("Item is null.");
     
     items.add (item);
+    fireIntervalAdded (this, items.size () - 1, items.size () - 1);
   }
   
   
@@ -88,5 +99,33 @@ public class ShowChannel
                                           " out of bounds.");
     
     return items.get (index);
+  }
+
+  
+  /**
+   * List model retrieval wrapper for get.
+   * 
+   * @param index  The index of the item to retrieve from the channel.
+   * 
+   * @return       the item at the given index in the list.
+   */
+
+  @Override
+  public Object
+  getElementAt (int index)
+  {
+    return get (index);
+  }
+
+
+  /**
+   * @return the size of the list.
+   */
+  
+  @Override
+  public int
+  getSize ()
+  {
+    return items.size ();
   }
 }

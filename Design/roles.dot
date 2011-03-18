@@ -1,0 +1,93 @@
+digraph Roles
+{
+	node    [style     = filled,
+	         fillcolor = white,
+	         color     = white];
+	label = "Roles, their privilege levels and module mapping.";
+	// LOGON PHASE
+	subgraph cluster_1
+	{
+		label     = "Before entering the system..."
+		style     = filled;
+		pencolor  = white;
+		fillcolor = crimson;
+		labeljust = l;
+		// User
+		User -> LogOn;
+		LogOn [label = "Log on with username and password"];
+	}
+	// USER CLASSES
+	subgraph cluster_2
+	{
+		label     = "I am a...";
+		style     = filled;
+		pencolor  = white;
+		fillcolor = gold;
+		labeljust = l;
+		// StdUser (unprivileged)
+		StdUser [label = "standard user."]
+		LogOn -> StdUser;
+		// LibraryMgr (privileged)
+		LibraryMgr [label = "library manager."]
+		LogOn -> LibraryMgr;
+		// Admin (super-privileged)
+		Admin [label = "administrator."]
+		LogOn -> Admin;
+	}
+	// ROLES
+	subgraph cluster_3
+	{
+		label       = "I want to...";
+		style       = filled;
+		pencolor    = white;
+		fillcolor   = chartreuse;
+		labeljust = l;
+		node [shape = rectangle];
+		// CEditShow
+		CEditShow   [label = "create or edit\na show."];
+		StdUser    -> CEditShow;
+		LibraryMgr -> CEditShow;
+		Admin      -> CEditShow;
+		// PlayShow
+		PlayShow    [label = "present\na show."];
+		StdUser    -> PlayShow;
+		LibraryMgr -> PlayShow;
+		Admin      -> PlayShow;
+		// MUserTracks
+		MUserTracks [label = "manage or upload\nmy personal tracks."];
+		StdUser    -> MUserTracks;
+		LibraryMgr -> MUserTracks;
+		Admin      -> MUserTracks;
+		// MLibrary
+		MLibrary    [label = "manage\nthe track library."];
+		LibraryMgr -> MLibrary;
+		Admin      -> MLibrary;
+		// Configure
+		Configure   [label = "configure\nthe system."];
+		Admin      -> Configure;
+	}
+	// MODULES
+	subgraph cluster_4
+	{
+		label     = "The module for this task is...";
+		style     = filled;
+		pencolor  = white;
+		fillcolor = cornflowerblue;
+		labeljust = l;
+		// ShowEditor
+		ShowEditor;
+		CEditShow   -> ShowEditor;
+		// ShowPlayout
+		ShowPlayout;
+		PlayShow    -> ShowPlayout;
+		// CollectionEditor
+		CollectionEditor;
+		MUserTracks -> CollectionEditor;
+		// LibraryEditor
+		LibraryEditor;
+		MLibrary    -> LibraryEditor;
+		// SystemSettings
+		SystemSettings;
+		Configure   -> SystemSettings;
+	}
+}

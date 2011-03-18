@@ -3,16 +3,10 @@
  */
 package uk.org.ury.show.viewer;
 
-import java.net.URL;
-
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
 
-import org.swixml.SwingEngine;
-
-import uk.org.ury.frontend.FrontendError;
-import uk.org.ury.frontend.FrontendSubBanner;
+import uk.org.ury.frontend.FrontendPanel;
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
 
 
 /**
@@ -21,10 +15,17 @@ import uk.org.ury.frontend.FrontendSubBanner;
  * @author  Matt Windsor.
  */
 
-public class TrackBin extends JPanel
+public class TrackBin extends FrontendPanel
 {
+  /**
+   * 
+   */
+  private static final long serialVersionUID = -5414923374901972511L;
+  
+  
+  /* Components created and exposed by the XML engine. */
+  
   private JLabel binName;
-  private JList itemList;
   
   
   /**
@@ -34,37 +35,19 @@ public class TrackBin extends JPanel
    * XML manifest "track_bin.xml" in the same directory as 
    * this class file.
    * 
+   * TODO: add track list into constructor
+   * 
    * @param name  The name of the bin.
    * 
-   * TODO: add track list into constructor
+   * @throws      UICreationFailureException if the UI creation fails.
    */
   
   public
   TrackBin (String name)
+  throws UICreationFailureException
   {
-    super ();
-    
-    // Acquire path.
-    
-    URL path = getClass ().getResource ("track_bin.xml");
-    
-    if (path == null)
-      FrontendError.reportFatal ("UI creation failure: XML layout does not exist.", null);
-  
-    SwingEngine se = new SwingEngine (this);
-    se.getTaglib ().registerTag ("subbanner", FrontendSubBanner.class);
-    
-   // Read the XML.
-    
-    try
-      {
-        se.insert (path, this);
-      }
-    catch (Exception e)
-      {
-        FrontendError.reportFatal ("UI creation failure: " + e.getMessage (), null);
-      }
-    
+    super ("track_bin.xml", null);
+ 
     // Tweak name.
     
     binName.setText (name);

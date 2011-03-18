@@ -3,6 +3,8 @@
  */
 package uk.org.ury.frontend;
 
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
+
 
 /**
  * A frontend user interface panel.
@@ -52,11 +54,14 @@ public abstract class FrontendModulePanel extends FrontendPanel
    *                 layout.
    *                 
    * @param master   The FrontendMaster driving the frontend.
+   * 
+   * @throws         UICreationFailureException if the UI creation fails.
    */
   
   public
   FrontendModulePanel (FrontendModule module, String xmlPath, 
                        FrontendMaster master)
+  throws UICreationFailureException
   {
     super (xmlPath, master);
     this.module = module;
@@ -82,9 +87,4 @@ public abstract class FrontendModulePanel extends FrontendPanel
   {
     return module;
   }
-  
-  
-  /**
-   * 
-   */
 }

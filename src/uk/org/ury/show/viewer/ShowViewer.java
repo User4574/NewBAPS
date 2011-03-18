@@ -1,21 +1,20 @@
 package uk.org.ury.show.viewer;
 
-import java.lang.reflect.InvocationTargetException;
-
-import javax.swing.SwingUtilities;
+import java.util.List;
 
 import uk.org.ury.config.ConfigReader;
 import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.UserClass;
 import uk.org.ury.database.exceptions.MissingCredentialsException;
+import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.frontend.AbstractFrontendModule;
-import uk.org.ury.frontend.FrontendError;
-import uk.org.ury.frontend.FrontendFrame;
 import uk.org.ury.frontend.FrontendMaster;
 import uk.org.ury.frontend.FrontendModulePanel;
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
 
 import uk.org.ury.show.ShowChannel;
 import uk.org.ury.show.ShowUtils;
+import uk.org.ury.show.item.ShowItem;
 
 
 /**
@@ -39,7 +38,6 @@ public class ShowViewer extends AbstractFrontendModule
   private DatabaseDriver dd;
   private ShowChannel[] channels;
   private ShowViewerPanel panel;
-  private FrontendFrame frame;
   private ConfigReader config;
   
   
@@ -50,72 +48,8 @@ public class ShowViewer extends AbstractFrontendModule
   public
   ShowViewer ()
   {
-    try
-      {
-        config = new ConfigReader ("res/conf.xml");
-      }
-    catch (MissingCredentialsException e)
-      {
-        System.out.println(e);
-      }
-    
-    frame = null;
     channels = new ShowChannel[ShowUtils.NUM_CHANNELS];
   }
-  
-  
-  /**
-   * Initialise the library viewer frontend as an applet.
-   */
-  
-  public void
-  init ()
-  {
-    frame = null;
-    channels = new ShowChannel[ShowUtils.NUM_CHANNELS];
-    panel = new ShowViewerPanel (this, null);
-    
-    
-    try
-    {
-      SwingUtilities.invokeAndWait (new Runnable ()
-      {
-        public void
-        run ()
-        {
-          panel.setOpaque (true);
-          setContentPane (panel);
-          
-          runFrontend (null);
-        }
-        
-      });
-    }
-    catch (InterruptedException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace ();
-      }
-    catch (InvocationTargetException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace ();
-      }
-  }
-  
-  
-  /**
-   * Run the library viewer frontend as an applet.
-   */
-  
-  public void
-  start ()
-  {
-    frame = null;
-    panel = new ShowViewerPanel (this, null);
-    
-    add (panel);
-  } 
   
   
   /**
@@ -127,6 +61,18 @@ public class ShowViewer extends AbstractFrontendModule
   runFrontend (FrontendMaster master)
   { 
     dd = null;
+    config = null;
+    
+    try
+    {
+      config = new ConfigReader (master.getResourceDirectory () + "conf.xml");
+    }
+    catch (MissingCredentialsException e)
+    {
+      System.out.println(e);
+    }
+  
+    
     
     try
       {
@@ -135,14 +81,39 @@ public class ShowViewer extends AbstractFrontendModule
     catch (MissingCredentialsException e)
       {
         // TODO: Privilege de-escalation
-        FrontendError.reportFatal (e.getMessage (), frame);
+        master.fatalError (e.getMessage ());
       }
     catch (Exception f)
       {
-        FrontendError.reportFatal (f.getMessage (), frame);
+        master.fatalError (f.getMessage ());
       }
     
-    panel = new ShowViewerPanel (this, master);
+    for (int i = 0; i < channels.length; i++)
+      {
+        channels[i] = new ShowChannel ();
+        
+        try
+          {
+            for (ShowItem item : ShowUtils.getChannelList (dd, 4696, i))
+              {
+                channels[i].add (item);
+              }
+          }
+        catch (QueryFailureException e)
+          {
+            master.fatalError (e.getMessage ());
+          }
+      }
+    
+    try
+      {
+        panel = new ShowViewerPanel (this, master);
+      }
+    catch (UICreationFailureException e)
+      {
+        master.fatalError (e.getMessage ());
+      }
+    
     return panel;
   }
 
@@ -156,5 +127,19 @@ public class ShowViewer extends AbstractFrontendModule
   {
     // TODO Auto-generated method stub
     return channels;
+  }
+
+  
+  /**
+   * @return  the list of bin names.
+   * 
+   * @throws  QueryFailureException if the underlying database query
+   *          fails.
+   */
+
+  public List<String>
+  getBins () throws QueryFailureException
+  {
+    return ShowUtils.getPublicFolders (dd);
   }
 }

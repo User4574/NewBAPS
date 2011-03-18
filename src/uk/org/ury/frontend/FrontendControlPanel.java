@@ -3,6 +3,8 @@
  */
 package uk.org.ury.frontend;
 
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
+
 
 /**
  * Abstract class for frontend module control panels.
@@ -38,25 +40,15 @@ public abstract class FrontendControlPanel extends FrontendPanel
    * @param xmlPath  The path, relative from this source file, to the
    *                 XML file from which this panel will read its 
    *                 layout.
+   *                 
+   * @throws         UICreationFailureException if the UI creation fails.
    */
      
   public
   FrontendControlPanel (String xmlPath)
+  throws UICreationFailureException
   {
      super (xmlPath, null);
-  }
-
-
-  /**
-   * Set the frontend master to which this panel is bound.
-   * 
-   * @param master  The master to set.
-   */
-  
-  public void
-  setMaster (FrontendMaster master)
-  {
-    this.master = master;
   }
   
   

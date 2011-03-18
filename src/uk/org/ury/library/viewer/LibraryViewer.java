@@ -1,11 +1,7 @@
 package uk.org.ury.library.viewer;
 
-import java.lang.reflect.InvocationTargetException;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.SwingUtilities;
 
 import uk.org.ury.config.ConfigReader;
 import uk.org.ury.database.DatabaseDriver;
@@ -13,15 +9,13 @@ import uk.org.ury.database.UserClass;
 import uk.org.ury.database.exceptions.MissingCredentialsException;
 import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.frontend.AbstractFrontendModule;
-import uk.org.ury.frontend.FrontendError;
-import uk.org.ury.frontend.FrontendFrame;
 import uk.org.ury.frontend.FrontendMaster;
 import uk.org.ury.frontend.FrontendModulePanel;
-
-import uk.org.ury.library.LibraryItem;
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
 
 import uk.org.ury.library.LibraryUtils;
 import uk.org.ury.library.exceptions.EmptySearchException;
+import uk.org.ury.library.item.LibraryItem;
 
 public class LibraryViewer extends AbstractFrontendModule
 {
@@ -33,7 +27,6 @@ public class LibraryViewer extends AbstractFrontendModule
   private DatabaseDriver dd;
   private List<LibraryItem> libraryList;
   private LibraryViewerPanel panel;
-  private FrontendFrame frame;
   private ConfigReader config;
   
   
@@ -53,64 +46,9 @@ public class LibraryViewer extends AbstractFrontendModule
         System.out.println(e);
       }
     
-    frame = null;
     libraryList = new ArrayList<LibraryItem> ();
     panel = null;
   }
-  
-  
-  /**
-   * Initialise the library viewer frontend as an applet.
-   */
-  
-  public void
-  init ()
-  {
-    frame = null;
-    libraryList = new ArrayList<LibraryItem> ();
-    panel = null;
-    
-    
-    try
-    {
-      SwingUtilities.invokeAndWait (new Runnable ()
-      {
-        public void
-        run ()
-        {
-          panel.setOpaque (true);
-          setContentPane (panel);
-          
-          runFrontend (null);
-        }
-        
-      });
-    }
-    catch (InterruptedException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace ();
-      }
-    catch (InvocationTargetException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace ();
-      }
-  }
-  
-  
-  /**
-   * Run the library viewer frontend as an applet.
-   */
-  
-  public void
-  start ()
-  {
-    frame = null;
-    panel = new LibraryViewerPanel (this, null);
-    
-    add (panel);
-  } 
 
   
   /**
@@ -129,14 +67,22 @@ public class LibraryViewer extends AbstractFrontendModule
     catch (MissingCredentialsException e)
       {
         // TODO: Privilege de-escalation
-        FrontendError.reportFatal (e.getMessage (), frame);
+        master.fatalError (e.getMessage ());
       }
     catch (Exception f)
       {
-        FrontendError.reportFatal (f.getMessage (), frame);
+        master.fatalError (f.getMessage ());
       }
     
-    panel = new LibraryViewerPanel (this, master);
+    try
+      {
+        panel = new LibraryViewerPanel (this, master);
+      }
+    catch (UICreationFailureException e)
+      {
+        master.fatalError (e.getMessage ());
+      }
+  
     return panel;
   }
 
@@ -152,19 +98,16 @@ public class LibraryViewer extends AbstractFrontendModule
    *                
    * @throws        EmptySearchException if the search string is 
    *                empty or null (from LibraryUtils.search).
+   *                
+   * @throws        QueryFailureException if the search query 
+   *                fails (from LibraryUtils.search).
    */
   
   public void
-  doSearch (String search) throws EmptySearchException
+  doSearch (String search)
+  throws EmptySearchException, QueryFailureException
   {
-    try
-      {
-        libraryList = LibraryUtils.search (dd, search);
-      }
-    catch (QueryFailureException e)
-      {
-        FrontendError.reportFatal (e.getMessage (), frame);
-      }
+    libraryList = LibraryUtils.search (dd, search);
   }
 
   

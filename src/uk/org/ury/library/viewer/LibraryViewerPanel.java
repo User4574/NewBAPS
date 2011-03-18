@@ -14,9 +14,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
+import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.frontend.FrontendMaster;
 import uk.org.ury.frontend.FrontendModulePanel;
-import uk.org.ury.library.LibraryTableModel;
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
 import uk.org.ury.library.exceptions.EmptySearchException;
 
 
@@ -59,10 +60,13 @@ public class LibraryViewerPanel extends FrontendModulePanel
    * @param viewer  The LibraryViewer controlling this LibraryViewerPanel.
    * 
    * @param master   The FrontendMaster driving the frontend.
+   * 
+   * @throws         UICreationFailureException if the UI creation fails.
    */
   
   public
   LibraryViewerPanel (LibraryViewer viewer, FrontendMaster master)
+  throws UICreationFailureException
   {
     super (viewer, "library_viewer_gui.xml", master);
  
@@ -137,6 +141,10 @@ public class LibraryViewerPanel extends FrontendModulePanel
         try
           {
             master.doSearch (searchField.getText ());
+          }
+        catch (QueryFailureException e)
+          {
+            searchFailureMessage = "Search failed: " + e.getMessage ();
           }
         catch (EmptySearchException e)
           {

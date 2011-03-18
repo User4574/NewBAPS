@@ -4,7 +4,7 @@
    constraints="BorderLayout.NORTH" />
   <vbox>
     <scrollpane id="itemScroller">
-      <list id="itemList" />
+      <list id="itemList" visiblerowcount="5" />
     </scrollpane>
   </vbox>
 </panel>

@@ -1,0 +1,17 @@
+digraph
+{
+	// LOGON PHASE
+	User -> LogOn;
+	LogOn -> StdUser;
+	LogOn -> LibraryMgr;
+	// USER CLASSES
+	// - StdUser (unprivileged)
+	StdUser -> CreateEditShow;
+	StdUser -> PlayShow;
+	StdUser -> ManageUserTracks;
+	// - LibraryMgr (privileged)
+	LibraryMgr -> CreateEditShow;
+	LibraryMgr -> PlayShow;
+	LibraryMgr -> ManageUserTracks;
+	LibraryMgr -> ManageLibrary;
+}

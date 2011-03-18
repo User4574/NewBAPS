@@ -29,8 +29,8 @@ public class FrontendError
   /** 
    * Create an error dialogue to report a fatal error.
    * 
-   * @string message  The message, eg the exception message, 
-   *                  to report to the user.
+   * @param message  The message, eg the exception message, 
+   *                 to report to the user.
    */
   
   public static void
@@ -46,5 +46,16 @@ public class FrontendError
         JOptionPane.ERROR_MESSAGE);
     
     System.exit (-1);
+  }
+
+
+  public static void
+  reportFatal (String message, FrontendApplet panel)
+  {
+    // TODO: Log
+    
+    // TODO: Error dialogue
+    
+    System.out.println (message);
   }
 }

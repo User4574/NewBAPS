@@ -2,6 +2,7 @@ package uk.org.ury.testrig;
 
 
 import uk.org.ury.frontend.FrontendControlPanel;
+import uk.org.ury.frontend.exceptions.UICreationFailureException;
 
 
 /**
@@ -14,8 +15,21 @@ import uk.org.ury.frontend.FrontendControlPanel;
 public class DemoControlPanel extends FrontendControlPanel
 {
   
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 7558888612002013312L;
+
+
+  /**
+   * Constructs a new DemoControlPanel.
+   * 
+   * @throws  UICreationFailureException if the UI creation fails.
+   */
+  
   public
   DemoControlPanel ()
+  throws UICreationFailureException
   {
     super ("demo_control_panel.xml");
   }

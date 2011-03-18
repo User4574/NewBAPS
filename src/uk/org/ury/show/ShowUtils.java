@@ -12,8 +12,8 @@ import java.util.List;
 import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.exceptions.QueryFailureException;
 
-import uk.org.ury.show.ShowItem;
-import uk.org.ury.show.ShowItemProperty;
+import uk.org.ury.show.item.ShowItem;
+import uk.org.ury.show.item.ShowItemProperty;
 
 
 /**
@@ -40,6 +40,65 @@ public class ShowUtils
   
   
   /**
+   * Return the names of the public track folders, or "bins".
+   * 
+   * @param db  The database to query.
+   * 
+   * @return    a list of the public folder names.
+   *            The list may be empty.                
+   *                
+   * @throws    IllegalArgumentException if the database is 
+   *            null, the show ID is negative or the 
+   *            channel index falls out of bounds.
+   *                
+   * @throws    QueryFailureException if the database backend 
+   *            yielded an error while executing the search 
+   *            query.
+   */
+  
+  public static List<String>
+  getPublicFolders (DatabaseDriver db)
+  throws QueryFailureException
+  {
+    if (db == null)
+      throw new IllegalArgumentException ("Database handle is null.");
+    
+    
+    List<String> results = new ArrayList<String> ();
+    
+    
+    ResultSet rs = null;
+
+    try
+      {
+        rs = db.executeQuery ("SELECT share AS name, description"
+                              + " FROM baps_filefolder"
+                              + " WHERE baps_filefolder.public"
+                              + "    = TRUE"
+                              + " ORDER BY filefolderid ASC", MAX_RESULTS);
+      }
+    catch (SQLException e1)
+      {
+        throw new QueryFailureException (e1.getMessage ());
+      }
+    
+    try
+      {
+        while (rs.next ())
+          {
+            results.add (rs.getString (2));
+          }
+      }
+    catch (SQLException e)
+      { 
+        throw new QueryFailureException (e.getMessage ());
+      }
+  
+    return results;
+  }
+  
+  
+  /**
    * Given a show and a channel, retrieve a list of all show items
    * bound to that channel for the show.
    * 
@@ -48,6 +107,9 @@ public class ShowUtils
    * @param showID   The unique number that identifies the show.
    * 
    * @param channel  The index of the channel to query.
+   *                           
+   * @return        a list of ShowItems extracted from the show and 
+   *                channel.  The list may be empty.
    *                
    * @throws        IllegalArgumentException if the database is 
    *                null, the show ID is negative or the 
@@ -56,9 +118,6 @@ public class ShowUtils
    * @throws        QueryFailureException if the database backend 
    *                yielded an error while executing the search 
    *                query.
-   *                           
-   * @return        a list of ShowItems extracted from the show and 
-   *                channel.  The list may be empty.
    */
   
   public static List<ShowItem>
@@ -83,18 +142,19 @@ public class ShowUtils
     
     try
       {
-        rs = db.executeQuery ("SELECT name1, name2, positionid"
+        rs = db.executeQuery ("SELECT name1, name2, position"
                               + " FROM baps_show"
                               + " INNER JOIN baps_listing"
                               + "    ON baps_show.showid"
                               + "        = baps_listing.showid"
                               + " INNER JOIN baps_item"
                               + "    ON baps_listing.listingid"
-                              + "        = baps_show.showid"
+                              + "        = baps_item.listingid"
                               + " WHERE baps_show.showid"
                               + "    = ?"
                               + " AND baps_listing.channel"
-                              + "    = ?", params, MAX_RESULTS);
+                              + "    = ?"
+                              + " ORDER BY position ASC", params, MAX_RESULTS);
       }
     catch (SQLException e)
       {
@@ -118,12 +178,12 @@ public class ShowUtils
   
   
   /**
-   * Translate a row retrieved from the database into a LibraryItem.
+   * Translate a row retrieved from the database into a ShowItem.
    * 
    * @param rs  The result-set, or database cursor, pointing to the 
    *            row to translate.
    *            
-   * @return    A new LibraryItem containing the properties extracted 
+   * @return    A new ShowItem containing the properties extracted 
    *            from the translated row.
    */
   

@@ -11,6 +11,8 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import uk.org.ury.frontend.exceptions.LoadFailureException;
+
 /**
  * A frame that hosts a FrontendModulePanel, used for serving frontend 
  * panels in a window (application mode).
@@ -31,11 +33,39 @@ public class FrontendFrame extends JFrame implements FrontendMaster
   private FrontendModulePanel child;
   private FrontendControlPanel cpanel;
   
+  
+  /**
+   * Construct a new FrontendFrame given an initial frontend module.
+   * 
+   * Loading will fail with a fatal error if the class is not found,
+   * or is not an implementor of FrontendModule.
+   * 
+   * @param moduleName  The fully qualified class-name of the module,
+   *                    minus the leading "uk.org.ury." domain.
+   */
+  
   public
-  FrontendFrame (FrontendModulePanel parent)
+  FrontendFrame (String moduleName)
   {
-    super (parent.getName ());
-   
+    super ("URY newBAPS");
+    try
+      {
+        loadModule (moduleName);
+      }
+    catch (LoadFailureException e)
+      {
+        fatalError (e.getMessage ());
+      }
+  }
+
+  
+  /**
+   * Set up the user interface of the frame.
+   */
+  
+  public void
+  setupUI ()
+  {
     try
       {
         // Set System L&F
@@ -43,7 +73,7 @@ public class FrontendFrame extends JFrame implements FrontendMaster
       } 
     catch (UnsupportedLookAndFeelException e)
       {
-       // handle exception
+        // handle exception
       }
     catch (ClassNotFoundException e)
       {
@@ -60,21 +90,19 @@ public class FrontendFrame extends JFrame implements FrontendMaster
     
     setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
     
-    this.child = parent;
-    
     Container cp = getContentPane ();
     
     // Banner
-    
-    banner = new FrontendBanner (parent.getName ());
+    System.out.println (child);
+    banner = new FrontendBanner (child.getName ());
     
     // Composition
     
     cp.add (banner, BorderLayout.NORTH);
-    cp.add (parent, BorderLayout.CENTER);
+    cp.add (child, BorderLayout.CENTER);
     
     setPreferredSize (new Dimension (800, 600));
-    setMinimumSize (new Dimension (800, 600));
+    setMinimumSize (new Dimension (800, 600)); 
     
     pack ();
     setVisible (true);
@@ -89,11 +117,16 @@ public class FrontendFrame extends JFrame implements FrontendMaster
    * 
    * @param moduleName  The fully qualified class-name of the module,
    *                    minus the leading "uk.org.ury." domain.
+   *                    
+   * @throws            LoadFailureException if the class is 
+   *                    not found, or is not an implementor of 
+   *                    FrontendModule.
    */
   
   @Override
   public void
   loadModule (String moduleName)
+  throws LoadFailureException
   {
     Class<?> moduleClass = null;
     
@@ -103,11 +136,16 @@ public class FrontendFrame extends JFrame implements FrontendMaster
       }
     catch (ClassNotFoundException e)
       {
-        FrontendError.reportFatal ("Could not load module: " + e.getMessage (), this);
+        throw new LoadFailureException ("Could not load module: "
+                                              + e.getMessage ());
       }
 
     
-    if (FrontendModule.class.isAssignableFrom (moduleClass))
+    if (FrontendModule.class.isAssignableFrom (moduleClass) == false)
+      {
+        throw new LoadFailureException ("Could not load module: Not a FrontendModule");
+      }
+    else
       {
         FrontendModulePanel temp = child;
         
@@ -117,17 +155,24 @@ public class FrontendFrame extends JFrame implements FrontendMaster
           }
         catch (InstantiationException e)
           {
-            FrontendError.reportFatal ("Could not load module: " + e.getMessage (), this);
+            throw new LoadFailureException ("Could not load module: "
+                                                  + e.getMessage ());
           }
         catch (IllegalAccessException e)
           {
-            FrontendError.reportFatal ("Could not load module: " + e.getMessage (), this);
+            throw new LoadFailureException ("Could not load module: "
+                                                  + e.getMessage ());
           }
         
-        remove (temp);
-        add (child);
+        if (temp != null)
+          remove (temp);
         
-        banner.setTitle (child.getName ());
+        add (child);
+        child.setMaster (this);
+        
+        if (banner != null)
+          banner.setTitle (child.getName ());
+        
         pack ();
       }
   }
@@ -146,11 +191,16 @@ public class FrontendFrame extends JFrame implements FrontendMaster
    * @param cPanelName  The fully qualified class-name of the control
    *                    panel to install, minus the leading 
    *                    "uk.org.ury." domain.
+   *                    
+   * @throws            LoadFailureException if the class is 
+   *                    not found, or is not an implementor of 
+   *                    FrontendModule.
    */
   
   @Override
   public void
   loadModule (String moduleName, String cPanelName)
+  throws LoadFailureException
   {
     FrontendModulePanel newParent = child;
     loadModule (moduleName);
@@ -172,11 +222,16 @@ public class FrontendFrame extends JFrame implements FrontendMaster
    *                    
    * @param child       The child panel in the relationship modelled
    *                    by the control panel interface.
+   *                    
+   * @throws            LoadFailureException if the class is 
+   *                    not found, or is not an implementor of 
+   *                    FrontendControlPanel.
    */
- 
+
   private void
   loadControlPanel (String cPanelName, FrontendModulePanel parent, 
                     FrontendModulePanel child)
+  throws LoadFailureException
   {
     Class<?> cPanelClass = null;
     
@@ -186,7 +241,8 @@ public class FrontendFrame extends JFrame implements FrontendMaster
       }
     catch (ClassNotFoundException e)
       {
-        FrontendError.reportFatal ("Could not load control panel: " + e.getMessage (), this);
+        throw new LoadFailureException ("Could not load control panel: "
+                                        + e.getMessage ());
       }
 
     
@@ -200,11 +256,13 @@ public class FrontendFrame extends JFrame implements FrontendMaster
           }
         catch (InstantiationException e)
           {
-            FrontendError.reportFatal ("Could not load module: " + e.getMessage (), this);
+            throw new LoadFailureException ("Could not load control panel: "
+                                            + e.getMessage ());
           }
         catch (IllegalAccessException e)
           {
-            FrontendError.reportFatal ("Could not load module: " + e.getMessage (), this);
+            throw new LoadFailureException ("Could not load control panel: "
+                                            + e.getMessage ());
           }
         
         if (temp != null)
@@ -254,5 +312,32 @@ public class FrontendFrame extends JFrame implements FrontendMaster
     
     pack ();
     repaint ();
+  }
+
+  
+  /**
+   * Report a fatal error,
+   * 
+   * @param message  The message, eg the exception message, to report
+   *                 to the user.
+   */
+
+  @Override
+  public void
+  fatalError (String message)
+  {
+    FrontendError.reportFatal (message, this);
+  }
+  
+  
+  /**
+   * @return  the resource directory.
+   */
+  
+  @Override
+  public String
+  getResourceDirectory ()
+  {
+    return "res/";
   }
 }

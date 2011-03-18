@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel layout="BorderLayout">
+  <hbox constraints="BorderLayout.NORTH" border="EmptyBorder(5,5,5,5)">
+    <button id="loadButton" text="Load Show or Template..." mnemonic="VK_L"
+     action="load" />
+    <button id="searchButton" text="Search Record Library" mnemonic="VK_S" 
+     action="search" />
+    <glue />
+    <button id="helpButton" text="Help..." mnemonic="VK_H" 
+     action="help" />
+    <button id="feedbackButton" text="Feedback..." mnemonic="VK_F" 
+     action="feedback" />
+  </hbox>
+
+  <splitpane constraints="BorderLayout.CENTER" border="EmptyBorder(0,5,0,5)"
+   id="mainSplit" orientation="0">
+    <splitpane orientation="0" id="binSplit">
+      <panel layout="BorderLayout">
+        <subbanner text="Useful Tracks" 
+         constraints="BorderLayout.NORTH" />
+        <scrollpane id="binScrollPane"
+         constraints="BorderLayout.CENTER">
+          <panel id="binGroupPanel" />
+        </scrollpane>
+      </panel>
+      <panel layout="BorderLayout">
+        <subbanner text="Sound Channels" 
+         constraints="BorderLayout.NORTH" />
+        <scrollpane id="channelScrollPane"
+         constraints="BorderLayout.CENTER">
+          <panel id="channelGroupPanel" />
+        </scrollpane>
+      </panel>
+    </splitpane>
+    <panel layout="BorderLayout">
+      <subbanner text="Quick Notes"
+       constraints="BorderLayout.NORTH" />
+      <textarea id="noteArea" border="LoweredBevelBorder"
+       text="Type quick notes here..." rows="3" />
+    </panel>
+  </splitpane>
+
+  <hbox constraints="BorderLayout.SOUTH" border="EmptyBorder(5,5,5,5)">
+    <hint text="For help, click the Help button." />
+  </hbox>
+</panel>
