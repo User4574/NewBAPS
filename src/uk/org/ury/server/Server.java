@@ -20,12 +20,29 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.ParseException;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
 import uk.org.ury.config.ConfigReader;
 import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.UserClass;
 import uk.org.ury.database.exceptions.ConnectionFailureException;
 import uk.org.ury.database.exceptions.MissingCredentialsException;
+import uk.org.ury.server.exceptions.BadRequestException;
 import uk.org.ury.server.exceptions.HandleFailureException;
+import uk.org.ury.server.exceptions.HandlerNotFoundException;
+import uk.org.ury.server.exceptions.HandlerSetupFailureException;
+import uk.org.ury.server.exceptions.HandlingException;
+import uk.org.ury.server.exceptions.NotAHandlerException;
 
 /**
  * The unified URY server, accepting requests over HTTP.
@@ -168,29 +185,104 @@ public class Server
   
   public void
   processBuffer (List<String> buffer, PrintWriter out)
-  {
+  { 
     String requestStart = buffer.get (0);
     
     System.out.println (requestStart);
     
+    HttpResponse response;
+    
     if (requestStart.startsWith ("GET"))
       {
         System.out.println ("That was a GET..."); 
-        handleGet (buffer, out);
+        try
+          {
+            response = handleGet (buffer);
+          }
+        catch (HandlerNotFoundException e)
+          {
+            // TODO: log
+            response = serveError (HttpStatus.SC_NOT_FOUND,
+                                   e.getMessage ());
+          }
+        catch (BadRequestException e)
+          {
+            // TODO: log
+            response = serveError (HttpStatus.SC_BAD_REQUEST,
+                                   e.getMessage ());
+          }
+        catch (HandlingException e)
+          {
+            response = serveError (HttpStatus.SC_INTERNAL_SERVER_ERROR,
+                e.getMessage ());
+          }
       }
     else
       {
         System.out.println ("Uh-oh! I don't know what to do!");
-        
-        out.println (HTTP_VERSION + " 501 Not Implemented");
-        out.println ("Connection: close");
-        out.print ("\r\n");
+        response = serveError (HttpStatus.SC_NOT_IMPLEMENTED, 
+                               "Feature not implemented yet.");
+      }
+    
+    
+    // Now send the response.
+    
+    for (Header h : response.getAllHeaders ())
+      {
+        out.println (h);
+      }
+    
+    try
+      {
+        out.print (EntityUtils.toString (response.getEntity ()));
+      }
+    catch (ParseException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace ();
+      }
+    catch (IOException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace ();
       }
   }
   
-  public void
-  handleGet (List<String> buffer, PrintWriter out)
+  
+  /**
+   * Handle a HTTP GET request.
+   * 
+   * @param buffer  The HTTP request as a list of strings.
+   * 
+   * @return        The HTTP response.
+   * 
+   * @throws        HandlerNotFoundException if the client requested 
+   *                a request handler that could not be found on the 
+   *                class path.
+   *                
+   * @throws        HandlerSetupFailureException if the handler was 
+   *                found but could not be set up (eg does not 
+   *                implement appropriate interface or cannot be 
+   *                instantiated).
+   * 
+   * @throws        HandleFailureException if an appropriate handler 
+   *                was contacted, but it failed to process the 
+   *                request.
+   *                
+   * @throws        BadRequestException if the request was malformed 
+   *                or invalid.
+   *                
+   * @throws        NotAHandlerException if the class requested to 
+   *                handle the request is not a handler.
+   */
+  
+  public HttpResponse
+  handleGet (List<String> buffer)
+  throws HandlerNotFoundException, HandlerSetupFailureException,
+    HandleFailureException, BadRequestException, NotAHandlerException
   {
+    HttpResponse response = null;
+    
     String[] getsplit = buffer.get (0).split (" ");
     String   path     = getsplit[1];
     
@@ -200,11 +292,22 @@ public class Server
         // Someone's trying to get the index page!
         // Humour them.
         
-        out.println (HTTP_VERSION + " 200 OK");
-        out.println ("Connection: close");
-        out.print ("\r\n");
+        response = new BasicHttpResponse (HttpVersion.HTTP_1_1,
+                                          HttpStatus.SC_OK,
+                                          "OK");
         
-        out.println (DOCTYPE + INDEX_HTML);
+        StringEntity entity = null;
+        
+        try
+          {
+            entity = new StringEntity (DOCTYPE + INDEX_HTML);
+          }
+        catch (UnsupportedEncodingException e)
+          {
+            throw new HandlerSetupFailureException ("(Index page)", e);
+          }
+
+        response.setEntity (entity);
       }
     else
       {
@@ -216,16 +319,15 @@ public class Server
           {
             pathURL = new URL ("http://localhost" + path);
           }
-        catch (MalformedURLException e1)
+        catch (MalformedURLException e)
           {
-            serveError (400, "Malformed URL.", out);
+            throw new BadRequestException (e);
           }
-        
-        
+
         String className    = "uk.org.ury" + pathURL.getPath ().replace ('/', '.');
         System.out.println (className);
         Class<?> newClass   = null;
- 
+     
         
         try
           {
@@ -233,112 +335,134 @@ public class Server
           }
         catch (ClassNotFoundException e)
           {
-            serveError (404, "Class " + className + " not found.", out);
-            return;
+            throw new HandlerNotFoundException (className, e);
           }
         
-        if (RequestHandler.class.isAssignableFrom (newClass))
+        
+        // Check for error (response set) here.
+        
+        if (response == null
+            && RequestHandler.class.isAssignableFrom (newClass))
           {
             String queryString = pathURL.getQuery ();
             Map<String, String> parameters;
+            
             try
               {
                 parameters = parseQueryString (queryString);
               }
             catch (UnsupportedEncodingException e)
               {
-                serveError (500, "URL decode failure for class "
-                    + className
-                    + " (" + e.getMessage () + ").", out);
-                return;
+                throw new HandlerSetupFailureException (className, e);
               }
             
-            List<String> response;
-            
+            List<String> content; 
+                
             try
               {
                 RequestHandler srh = ((RequestHandler) newClass.newInstance ());
-                response = srh.handleGetRequest (parameters, this);
+                content = srh.handleGetRequest (parameters, this);
               }
             catch (InstantiationException e)
               {
-                serveError (500, "Instantiation exception for class "
-                            + className
-                            + " (" + e.getMessage () + ").", out);
-                return;
+                throw new HandlerSetupFailureException (className, e);
               }
             catch (IllegalAccessException e)
               {
-                serveError (500, "Illegal access exception for class "
-                            + className 
-                            + " (" + e.getMessage () + ").", out);
-                return;
+                throw new HandlerSetupFailureException (className, e);
               }
-            catch (HandleFailureException e)
+            
+            
+            // Everything seems OK, so make the response.
+            
+            response = new BasicHttpResponse (HttpVersion.HTTP_1_1, 
+                                                  HttpStatus.SC_OK,
+                                                  "OK");
+             
+            String entityString = "";
+                
+            entityString += "START" + "\r\n";
+            
+            for (String line : content)
+              entityString += line + "\r\n";
+            
+            entityString += "END";
+
+                
+            StringEntity entity = null;
+                
+            try
               {
-                serveError (500, "Failed to handle request for class "
-                            + className
-                            + " (" + e.getMessage () + ").", out);
-                return;
+                entity = new StringEntity (entityString);
               }
-            
-            // If we made it this far, the response is A-OK.
-            
-            out.println (HTTP_VERSION + " 200 OK");
-            out.println ("Content-Type: text/plain");
-            out.print ("\r\n");
-            
-            out.println ("START");
-            
-            for (String line : response)
-              out.println (line);
-            
-            out.println ("END");
-            
-            out.flush ();            
+            catch (UnsupportedEncodingException e)
+              {
+                throw new HandlerSetupFailureException (className, e);
+              }
+                
+            entity.setContentType (HTTP.PLAIN_TEXT_TYPE);
+            response.setEntity (entity);
           }
         else
-          {
-            serveError (404, "Class " + className + " does not handle requests.", out);
-            return;
-          }
+          throw new NotAHandlerException (className);
       }
+    
+    return response;
   }
   
   
   /**
-   * Serve a HTTP plain-text error.
+   * Serve a HTTP plain-text error as a HTTP response.
    * 
    * @param code    HTTP status code to use.
    * @param reason  The reason to display to the client.
-   * @param out     The output stream.
+   * 
+   * @return        the HTTP response for the error.
    */
   
-  private void
-  serveError (int code, String reason, PrintWriter out)
-  {
-    String errorStatus = "";
+  private HttpResponse
+  serveError (int code, String reason)
+  {  
+    // Get the reason string to put in the error response.
+    // TODO: standards?
+    
+    String statusReason = "";
     
     switch (code)
       {
-      case 400:
-        errorStatus = "400 Bad Request";
+      case HttpStatus.SC_BAD_REQUEST:
+        statusReason = "Bad Request";
         break;
-      case 404:
-        errorStatus = "404 Not Found";
+      case HttpStatus.SC_NOT_FOUND:
+        statusReason = "Not Found";
         break;
       default:
-        errorStatus = "500 Internal Server Error";
+      case HttpStatus.SC_INTERNAL_SERVER_ERROR:
+        statusReason = "Internal Server Error";
         break;
       }
     
-    out.println (HTTP_VERSION + " " + errorStatus);
-    out.println ("Content-Type: text/plain");
-    out.println ("Connection: close");
-    out.print ("\r\n");
-   
-    out.println ("ERROR: " + reason);    
-    out.flush ();
+    HttpResponse response = new BasicHttpResponse (HttpVersion.HTTP_1_1,
+                                                   code, statusReason);
+    StringEntity entity = null;
+    
+    try
+      {
+        entity = new StringEntity ("ERROR: " + reason);
+      }
+    catch (UnsupportedEncodingException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace ();
+      }
+    
+    if (entity != null)
+      {
+        entity.setContentType (HTTP.PLAIN_TEXT_TYPE);
+        response.setEntity (entity);
+      }
+    
+    return response;
   }
   
   

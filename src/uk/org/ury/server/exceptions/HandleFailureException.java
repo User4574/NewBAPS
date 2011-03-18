@@ -10,7 +10,7 @@ package uk.org.ury.server.exceptions;
  * @author Matt Windsor
  */
 
-public class HandleFailureException extends Exception
+public class HandleFailureException extends HandlingException
 {
   
   /**
