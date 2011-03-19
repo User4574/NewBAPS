@@ -4,6 +4,7 @@
 package uk.org.ury.library;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import uk.org.ury.server.Server;
 import uk.org.ury.server.RequestHandler;
 import uk.org.ury.server.exceptions.HandleFailureException;
 import uk.org.ury.server.protocol.Directive;
+
 
 /**
  * A request handler for library queries.
@@ -48,11 +50,11 @@ public class LibraryRequestHandler implements RequestHandler
    */
   
   @Override
-  public List<String>
+  public Map<String, Object>
   handleGetRequest (Map<String, String> parameters, Server server)
   throws HandleFailureException
   {
-    List<String> response = new ArrayList<String> ();
+    Map<String, Object> response = new HashMap<String, Object>();
     
     if (parameters.containsKey ("function"))
       {
@@ -64,8 +66,9 @@ public class LibraryRequestHandler implements RequestHandler
           }
         else if (function.equals ("help"))
           {
-            response.add ("INFO: Available functions:");
-            response.add ("INFO: search (string) - search library for string.");
+            response.put (Directive.INFO.toString (),
+                          "Available functions:");
+            response.put (Directive.INFO.toString (), "search (string) - search library for string.");
           }
         else
           throw new HandleFailureException ("Unknown function: "
@@ -97,7 +100,7 @@ public class LibraryRequestHandler implements RequestHandler
   
   private void
   doSearch (Map<String, String> parameters, 
-            List<String> response, Server server)
+            Map<String, Object> response, Server server)
   throws HandleFailureException
   {
     if (parameters.containsKey ("search") == false)
@@ -123,14 +126,14 @@ public class LibraryRequestHandler implements RequestHandler
     
     try
       {
+        List<Map<String, String>> itemArray = new ArrayList<Map<String, String>> ();
+        
         for (LibraryItem li : LibraryUtils.search (dd, search))
           {
-            response.add (Directive.ITEM_START.toString ());
-            
-            response.addAll (li.asResponse ());
-            
-            response.add (Directive.ITEM_END.toString ());
+            itemArray.add (li.asResponse ());
           }
+        
+        response.put ("items", itemArray);
       }
     catch (QueryFailureException e)
       {

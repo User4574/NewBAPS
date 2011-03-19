@@ -3,7 +3,7 @@
  */
 package uk.org.ury.client.test;
 
-import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.ury.client.Client;
+import uk.org.ury.server.protocol.DecodeFailureException;
+import uk.org.ury.server.protocol.Directive;
 
 
 /**
@@ -55,9 +57,17 @@ public class ClientTest
   {
     Client client = new Client ();
     
-    List<String> response = client.get ("/server/ServerRequestHandler?function=test");
+    Map<?, ?> response = null;
     
-    Assert.assertEquals ("INFO: Test succeeded.", response.get (2));
+    try
+      {
+        response = client.get ("/server/ServerRequestHandler?function=test");
+      }
+    catch (DecodeFailureException e)
+      {
+        e.printStackTrace ();
+      }
+    
+    Assert.assertEquals ("Test succeeded.", response.get (Directive.INFO.toString ()));
   }
-
 }

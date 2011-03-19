@@ -16,7 +16,6 @@ import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.library.exceptions.EmptySearchException;
 import uk.org.ury.library.item.LibraryItem;
 import uk.org.ury.library.item.LibraryItemProperty;
-import uk.org.ury.server.protocol.Directive;
 
 
 /**
@@ -153,7 +152,7 @@ public class LibraryUtils
    *                  stanzas in the response.
    */
   
-  public static List<LibraryItem>
+/*  public static List<LibraryItem>
   extractItemsFromResponse (List<String> response)
   {
     List<LibraryItem> result = new ArrayList<LibraryItem> ();
@@ -185,7 +184,7 @@ public class LibraryUtils
       }
     
     return result;
-  }
+  }*/
   
   
   /**
@@ -205,7 +204,7 @@ public class LibraryUtils
    *                  DatabaseItem does not use String as its data type.
    */
   
-  public static LibraryItem
+  /*public static LibraryItem
   createItemFromResponse (List<String> response)
   {
     // TODO: More appropriate exceptions.
@@ -239,5 +238,5 @@ public class LibraryUtils
       }
     else
       throw new IllegalArgumentException ("Malformed response.");
-  }
+  }*/
 }

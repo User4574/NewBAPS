@@ -3,11 +3,15 @@ package uk.org.ury.client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.Map;
+
+import uk.org.ury.server.protocol.DecodeFailureException;
+import uk.org.ury.server.protocol.ProtocolUtils;
 
 public class Client
 {
@@ -17,15 +21,16 @@ public class Client
    * @param file  The "file", including path and query string, to 
    *              fetch from the server.
    * 
-   * @return      The response from the server, as a List of lines. 
+   * @return      The response from the server, as a key-value map.
+   * @throws      DecodeFailureException  if the decode failed.
    */
   
-  public List<String>
-  get (String file)
+  public Map<?, ?>
+  get (String file) throws DecodeFailureException
   {
     URL url = null;
     URLConnection uc = null;
-    List<String> result = new ArrayList<String> ();
+    String result = "";
     
     try
       {
@@ -51,7 +56,7 @@ public class Client
              inputLine != null;
              inputLine = in.readLine())
           {
-            result.add (inputLine);
+            result += inputLine;
           }
       }
     catch (IOException e)
@@ -60,6 +65,6 @@ public class Client
         e.printStackTrace ();
       }
     
-    return result;
+    return ProtocolUtils.decode (result);
   }
 }

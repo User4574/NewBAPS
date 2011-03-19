@@ -3,8 +3,7 @@
  */
 package uk.org.ury.server;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ury.server.Server;
@@ -41,11 +40,11 @@ public class ServerRequestHandler implements RequestHandler
    */
   
   @Override
-  public List<String>
+  public Map<String, Object>
   handleGetRequest (Map<String, String> parameters, Server server)
   throws HandleFailureException
   {
-    List<String> response = new ArrayList<String> ();
+    Map<String, Object> response = new HashMap<String, Object> ();
     
     if (parameters.containsKey ("function"))
       {
@@ -57,11 +56,11 @@ public class ServerRequestHandler implements RequestHandler
           }
         else if (function.equals ("help"))
           {
-            response.add ("INFO: Available functions:");
-            response.add ("INFO: info - Get server information.");
+            response.put ("INFO", "Available functions:");
+            response.put ("INFO", "info - Get server information.");
           }
         else if (function.equals ("test"))
-          response.add ("INFO: Test succeeded.");
+          response.put ("INFO", "Test succeeded.");
         else
           throw new HandleFailureException ("Unknown function: "
                                             + function + ". (Try 'function=help'.)");
@@ -86,11 +85,11 @@ public class ServerRequestHandler implements RequestHandler
    */
   
   private void
-  getInfo (List<String> response, Server server)
+  getInfo (Map<String, Object> response, Server server)
   throws HandleFailureException
   {
-    response.add ("INFO: University Radio York BAPS Replacement");
-    response.add ("INFO: Server version is " + server.getVersion ());
+    response.put ("INFO", "University Radio York BAPS Replacement");
+    response.put ("INFO", "Server version is " + server.getVersion ());
   }
     
 }

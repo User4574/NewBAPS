@@ -1,6 +1,5 @@
 package uk.org.ury.server;
 
-import java.util.List;
 import java.util.Map;
 
 import uk.org.ury.server.exceptions.HandleFailureException;
@@ -31,14 +30,14 @@ public interface RequestHandler
    *                    This will be able to provide the handler with 
    *                    pooled resources, for example the database.
    * 
-   * @return            A list of lines to return in the body of the 
-   *                    server's response to the client.
+   * @return            A series of key-value pairs to pass back to 
+   *                    the client.
    *                  
    * @throws            HandleFailureException if the handler cannot 
    *                    handle the request.
    */
   
-  public List<String>
+  public Map<String, Object>
   handleGetRequest (Map<String, String> parameters, Server server)
   throws HandleFailureException;
 }

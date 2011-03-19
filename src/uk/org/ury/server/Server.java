@@ -29,6 +29,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONValue;
 
 import uk.org.ury.config.ConfigReader;
 import uk.org.ury.database.DatabaseDriver;
@@ -41,6 +42,8 @@ import uk.org.ury.server.exceptions.HandlerNotFoundException;
 import uk.org.ury.server.exceptions.HandlerSetupFailureException;
 import uk.org.ury.server.exceptions.HandlingException;
 import uk.org.ury.server.exceptions.NotAHandlerException;
+import uk.org.ury.server.protocol.Directive;
+import uk.org.ury.server.protocol.Status;
 
 /**
  * The unified URY server, accepting requests over HTTP.
@@ -353,7 +356,7 @@ public class Server
                 throw new HandlerSetupFailureException (className, e);
               }
             
-            List<String> content; 
+            Map<String, Object> content = null;
                 
             try
               {
@@ -376,21 +379,14 @@ public class Server
                                                   HttpStatus.SC_OK,
                                                   "OK");
              
-            String entityString = "";
-                
-            entityString += "START" + "\r\n";
+            content.put (Directive.STATUS.toString (),
+                         Status.OK.toString ());
             
-            for (String line : content)
-              entityString += line + "\r\n";
-            
-            entityString += "END";
-
-                
             StringEntity entity = null;
                 
             try
               {
-                entity = new StringEntity (entityString);
+                entity = new StringEntity (JSONValue.toJSONString (content));
               }
             catch (UnsupportedEncodingException e)
               {
@@ -445,7 +441,14 @@ public class Server
     
     try
       {
-        entity = new StringEntity ("ERROR: " + reason);
+        Map<String, Object> content = new HashMap<String, Object> ();
+        
+        content.put (Directive.STATUS.toString (),
+                     Status.ERROR.toString ());
+        content.put (Directive.REASON.toString (),
+                     reason);
+        
+        entity = new StringEntity (JSONValue.toJSONString (content));
       }
     catch (UnsupportedEncodingException e)
       {

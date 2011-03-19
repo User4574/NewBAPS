@@ -1,7 +1,6 @@
 package uk.org.ury.database;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ury.database.exceptions.MissingPropertyException;
@@ -80,18 +79,18 @@ public abstract class DatabaseItem<E, T>
    * @return  a list of lines representing the response.
    */
   
-  public List<String>
+  public Map<String, String>
   asResponse ()
   {
     // TODO: Fan out implementation details into separate class
     
-    List<String> response = new ArrayList<String> ();
+    Map<String, String> response = new HashMap<String, String> ();
     
     for (E property : properties.keySet ())
       {
         if (properties.get (property) != null)
-          response.add (property.toString () + ": "
-                        + properties.get (property).toString ());
+          response.put (property.toString (),
+                        properties.get (property).toString ());
       }
     
     return response;
