@@ -73,7 +73,7 @@ public abstract class FrontendModulePanel extends FrontendPanel
    */
   
   public abstract String 
-  getName ();
+  getModuleName ();
 
 
   /**

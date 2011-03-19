@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ury.database.exceptions.MissingPropertyException;
-import uk.org.ury.server.protocol.Directive;
 
 
 /**

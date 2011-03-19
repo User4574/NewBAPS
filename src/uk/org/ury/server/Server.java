@@ -21,12 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.Header;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.ParseException;
-import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.protocol.HTTP;
@@ -55,7 +53,6 @@ public class Server
 
   private ServerSocket serverSocket;
   
-  private static final String HTTP_VERSION   = "HTTP/1.1";
   private static final String SERVER_VERSION = "SLUT 0.0";
   private static final String DOCTYPE        = 
       "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\""

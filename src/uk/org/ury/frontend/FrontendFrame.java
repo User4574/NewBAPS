@@ -94,7 +94,7 @@ public class FrontendFrame extends JFrame implements FrontendMaster
     
     // Banner
     System.out.println (child);
-    banner = new FrontendBanner (child.getName ());
+    banner = new FrontendBanner (child.getModuleName ());
     
     // Composition
     
@@ -171,7 +171,7 @@ public class FrontendFrame extends JFrame implements FrontendMaster
         child.setMaster (this);
         
         if (banner != null)
-          banner.setTitle (child.getName ());
+          banner.setTitle (child.getModuleName ());
         
         pack ();
       }
@@ -303,7 +303,7 @@ public class FrontendFrame extends JFrame implements FrontendMaster
     
     child = mpanel;
     add (child);
-    banner.setTitle (child.getName ());
+    banner.setTitle (child.getModuleName ());
     
     if (cpanel != null)
       add (cpanel, BorderLayout.SOUTH);

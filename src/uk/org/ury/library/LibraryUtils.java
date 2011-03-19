@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map;
 
 import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.exceptions.QueryFailureException;
@@ -25,7 +24,6 @@ import uk.org.ury.server.protocol.Directive;
  * library items from the library areas of the URY database. 
  * 
  * @author  Matt Windsor
- *
  */
 
 public class LibraryUtils

@@ -83,7 +83,7 @@ public class DemoMenuPanel extends FrontendModulePanel
     
   @Override
   public String
-  getName ()
+  getModuleName ()
   {
     return "Demo Menu";
   }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel layout="BorderLayout">
   <hbox constraints="BorderLayout.NORTH" border="EmptyBorder(5,5,5,5)">
-    <label text="Search for:" labelfor="searchField" displayedmnemonic="VK_F" />
+    <label id="searchForLabel" labelfor="searchField" displayedmnemonic="VK_F" />
     <hbox border="EmptyBorder(0,5,0,5)">
       <textfield id="searchField" mnemonic="VK_F" action="search" />
     </hbox>
-    <button id="searchButton" text="Search" mnemonic="VK_S" action="search" />
+    <button id="searchButton" mnemonic="VK_S" action="search" />
   </hbox>
 
   <hbox constraints="BorderLayout.CENTER" border="EmptyBorder(0,5,0,5)">
@@ -14,7 +14,7 @@
     </scrollpane>
     <panel id="searchingPanel" constraints="BorderLayout.CENTER" visible="false"
      layout="BorderLayout">
-      <label id="searchingLabel" text="Searching..."
+      <label id="searchingLabel"
        constraints="BorderLayout.CENTER" horizontalalignment="CENTER" />
       <progressbar id="searchingProgressBar" indeterminate="true" 
        constraints="BorderLayout.SOUTH" />
@@ -27,6 +27,6 @@
   </hbox>
 
   <hbox constraints="BorderLayout.SOUTH" border="EmptyBorder(5,5,5,5)">
-    <hint text="To narrow your search, type part or all of the record title or artist into the box above." />
+    <hint id="hint" />
   </hbox>
 </panel>

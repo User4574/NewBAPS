@@ -101,12 +101,12 @@ public class ShowViewerPanel extends FrontendModulePanel
   /**
    * @return  the name of the panel.
    * 
-   * @see     uk.org.ury.frontend.FrontendModulePanel#getName()
+   * @see     uk.org.ury.frontend.FrontendModulePanel#getModuleName()
    */
   
   @Override
   public String
-  getName ()
+  getModuleName ()
   {
     return "Show Viewer Demo";
   }

@@ -4,6 +4,7 @@
 package uk.org.ury.library.viewer;
 
 
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
@@ -17,6 +18,7 @@ import javax.swing.SwingWorker;
 import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.frontend.FrontendMaster;
 import uk.org.ury.frontend.FrontendModulePanel;
+import uk.org.ury.frontend.HintField;
 import uk.org.ury.frontend.exceptions.UICreationFailureException;
 import uk.org.ury.library.exceptions.EmptySearchException;
 
@@ -37,21 +39,32 @@ public class LibraryViewerPanel extends FrontendModulePanel
   
   /* Panel widgets exposed by the SwiXML user interface. */
   
-  private JTable resultsTable;
+  private JTable      resultsTable;
   private JScrollPane resultsPane;
-  private JPanel messagePanel; 
-  private JLabel messageLabel;
-  private JPanel searchingPanel;
-  private JTextField searchField;
-  private JButton searchButton;
+  
+  private JPanel      messagePanel; 
+  private JLabel      messageLabel;
+  
+  private JPanel      searchingPanel;
+  private JLabel      searchingLabel;
+  
+  private JTextField  searchField;
+  private JButton     searchButton;
+  private JLabel      searchForLabel;
+  
+  private HintField   hint;
   
   
   /* This contains the last search failure message, for use in 
    * letting the user know what happened.
    */
   
-  private String searchFailureMessage = "Unknown error.";
+  private String searchFailureMessage;
+  
+  
+  // Resource bundle. 
 
+  private ResourceBundle rb;
   
   
   /**
@@ -68,13 +81,24 @@ public class LibraryViewerPanel extends FrontendModulePanel
   LibraryViewerPanel (LibraryViewer viewer, FrontendMaster master)
   throws UICreationFailureException
   {
-    super (viewer, "library_viewer_gui.xml", master);
- 
     /* The UI implementation is contained in library_viewer_gui.xml.
      *
      * See this file for more details.
      */
-
+    
+    super (viewer, "library_viewer_gui.xml", master);
+ 
+    
+    // Fill in locale-specific data.
+    
+    rb = ResourceBundle.getBundle ("uk.org.ury.library.viewer.LibraryViewer");
+    
+    searchFailureMessage = rb.getString ("ERR_UNKNOWN");
+    
+    searchingLabel.setText (rb.getString ("MSG_SEARCHING"));
+    searchForLabel.setText (rb.getString ("LBL_SEARCHFOR"));
+    searchButton.setText   (rb.getString ("BTN_SEARCH"));
+    hint.setText           (rb.getString ("HINT"));
     
     // Fine-tune table
     
@@ -85,14 +109,14 @@ public class LibraryViewerPanel extends FrontendModulePanel
   /**
    * @return  the name of the panel.
    * 
-   * @see     uk.org.ury.frontend.FrontendModulePanel#getName()
+   * @see     uk.org.ury.frontend.FrontendModulePanel#getModuleName()
    */
   
   @Override
   public String
-  getName ()
+  getModuleName ()
   {
-    return "Library Viewer Demo";
+    return rb.getString ("MODULE_NAME");
   }
 
   
@@ -115,17 +139,22 @@ public class LibraryViewerPanel extends FrontendModulePanel
      * user-friendliness.
      */
     
-    searchField.setEnabled (false);
-    searchButton.setEnabled (false);
-    resultsPane.setVisible (false);
-    messagePanel.setVisible (false);
+    searchField.setEnabled    (false);
+    searchButton.setEnabled   (false);
+    resultsPane.setVisible    (false);
+    messagePanel.setVisible   (false);
     searchingPanel.setVisible (true);
+    searchingLabel.setText    (String.format (rb.getString ("MSG_SEARCHING"),
+                                              searchField.getText ()));
     
     final LibraryViewer master = (LibraryViewer) getModule ();
     
     
     SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void> ()
     {
+      private String searchTerm = "";
+      
+      
       /**
        * Perform a task in a separate thread from event-dispatch.
        * 
@@ -138,17 +167,20 @@ public class LibraryViewerPanel extends FrontendModulePanel
       public Boolean
       doInBackground ()
       {
+        searchTerm = searchField.getText ();
+        
         try
           {
-            master.doSearch (searchField.getText ());
+            master.doSearch (searchTerm);
           }
         catch (QueryFailureException e)
           {
-            searchFailureMessage = "Search failed: " + e.getMessage ();
+            searchFailureMessage = String.format (rb.getString ("ERR_SEARCH_FAILED"),
+                                                  searchTerm, e.getMessage ());
           }
         catch (EmptySearchException e)
           {
-            searchFailureMessage = "Please type in a search term.";
+            searchFailureMessage = rb.getString ("ERR_EMPTY_SEARCH");
             return false;
           }
         
@@ -186,8 +218,8 @@ public class LibraryViewerPanel extends FrontendModulePanel
            * or not results were found. 
            */
           
-          searchField.setEnabled (true);
-          searchButton.setEnabled (true);
+          searchField.setEnabled    (true);
+          searchButton.setEnabled   (true);
           searchingPanel.setVisible (false);
           
           if (hasSucceeded == false)
@@ -197,8 +229,8 @@ public class LibraryViewerPanel extends FrontendModulePanel
             }
           else if (master.getLibraryList ().size () == 0)
             {
-              messageLabel.setText ("Sorry, but no results were "
-                                    + "found for that term.");
+              messageLabel.setText (String.format (rb.getString ("ERR_NO_RESULTS"),
+                                                   searchTerm));
               messagePanel.setVisible (true);
             }
           else
@@ -208,7 +240,7 @@ public class LibraryViewerPanel extends FrontendModulePanel
               resultsTable.setModel (new LibraryTableModel (master.getLibraryList ()));
               
               messagePanel.setVisible (false);
-              resultsPane.setVisible (true);            
+              resultsPane.setVisible  (true);            
             }
         }
     };
