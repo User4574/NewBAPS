@@ -417,7 +417,6 @@ public class Server
   serveError (int code, String reason)
   {  
     // Get the reason string to put in the error response.
-    // TODO: standards?
     
     String statusReason = "";
     

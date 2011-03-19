@@ -12,12 +12,11 @@ package uk.org.ury.server.exceptions;
 
 public class BadRequestException extends HandlingException
 {
-  
+
   /**
-   * TODO: Change this!  ---v
+   * 
    */
-  
-  private static final long serialVersionUID = -397479334359858162L;
+  private static final long serialVersionUID = 1825771401085225357L;
 
 
   /**

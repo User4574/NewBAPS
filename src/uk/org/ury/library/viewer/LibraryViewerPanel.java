@@ -177,6 +177,7 @@ public class LibraryViewerPanel extends FrontendModulePanel
           {
             searchFailureMessage = String.format (rb.getString ("ERR_SEARCH_FAILED"),
                                                   searchTerm, e.getMessage ());
+            return false;
           }
         catch (EmptySearchException e)
           {
@@ -206,11 +207,12 @@ public class LibraryViewerPanel extends FrontendModulePanel
           }
         catch (InterruptedException e)
           {
-            // Ignore
+            e.printStackTrace ();
           }
         catch (ExecutionException e)
           {
-            // Ignore
+            searchFailureMessage = String.format (rb.getString ("ERR_SEARCH_FAILED"),
+            searchTerm, e.getMessage ());
           }
           
           

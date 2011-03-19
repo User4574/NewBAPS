@@ -72,7 +72,7 @@ public abstract class DatabaseItem<E, T>
   
   
   /**
-   * Map down the item into a server response body.
+   * Retrieve a map of string representations of the properties.
    * 
    * This relies on E and T having meaningful toString methods.
    * 

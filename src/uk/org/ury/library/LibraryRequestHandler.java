@@ -133,7 +133,7 @@ public class LibraryRequestHandler implements RequestHandler
             itemArray.add (li.asResponse ());
           }
         
-        response.put ("items", itemArray);
+        response.put (Directive.ITEMS.toString (), itemArray);
       }
     catch (QueryFailureException e)
       {
