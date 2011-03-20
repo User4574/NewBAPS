@@ -17,7 +17,7 @@ import uk.org.ury.library.exceptions.EmptySearchException;
 import uk.org.ury.library.item.LibraryItem;
 import uk.org.ury.protocol.Directive;
 import uk.org.ury.server.Server;
-import uk.org.ury.server.RequestHandler;
+import uk.org.ury.server.ApiRequestHandler;
 import uk.org.ury.server.exceptions.HandleFailureException;
 
 
@@ -27,7 +27,7 @@ import uk.org.ury.server.exceptions.HandleFailureException;
  * @author Matt Windsor
  */
 
-public class LibraryRequestHandler implements RequestHandler
+public class LibraryRequestHandler implements ApiRequestHandler
 {
   /**
    * Handle a server GET request (that is, a request for data 

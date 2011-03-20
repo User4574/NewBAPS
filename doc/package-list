@@ -1,3 +1,5 @@
+uk.org.ury.client
+uk.org.ury.client.test
 uk.org.ury.config
 uk.org.ury.database
 uk.org.ury.database.exceptions
@@ -5,7 +7,13 @@ uk.org.ury.frontend
 uk.org.ury.frontend.exceptions
 uk.org.ury.library
 uk.org.ury.library.exceptions
+uk.org.ury.library.item
 uk.org.ury.library.viewer
+uk.org.ury.protocol
+uk.org.ury.protocol.exceptions
+uk.org.ury.server
+uk.org.ury.server.exceptions
 uk.org.ury.show
+uk.org.ury.show.item
 uk.org.ury.show.viewer
 uk.org.ury.testrig

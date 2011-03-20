@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ury.server.Server;
-import uk.org.ury.server.RequestHandler;
+import uk.org.ury.server.ApiRequestHandler;
 import uk.org.ury.server.exceptions.HandleFailureException;
 
 
@@ -17,7 +17,7 @@ import uk.org.ury.server.exceptions.HandleFailureException;
  * @author Matt Windsor
  */
 
-public class ServerRequestHandler implements RequestHandler
+public class ServerRequestHandler implements ApiRequestHandler
 {
   /**
    * Handle a server GET request (that is, a request for data 
