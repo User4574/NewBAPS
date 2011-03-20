@@ -10,8 +10,8 @@ import java.net.URLConnection;
 
 import java.util.Map;
 
-import uk.org.ury.server.protocol.DecodeFailureException;
-import uk.org.ury.server.protocol.ProtocolUtils;
+import uk.org.ury.protocol.ProtocolUtils;
+import uk.org.ury.protocol.exceptions.DecodeFailureException;
 
 public class Client
 {

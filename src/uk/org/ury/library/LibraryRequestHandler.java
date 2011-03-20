@@ -15,10 +15,10 @@ import uk.org.ury.database.exceptions.MissingCredentialsException;
 import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.library.exceptions.EmptySearchException;
 import uk.org.ury.library.item.LibraryItem;
+import uk.org.ury.protocol.Directive;
 import uk.org.ury.server.Server;
 import uk.org.ury.server.RequestHandler;
 import uk.org.ury.server.exceptions.HandleFailureException;
-import uk.org.ury.server.protocol.Directive;
 
 
 /**

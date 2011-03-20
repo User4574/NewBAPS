@@ -12,8 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.ury.client.Client;
-import uk.org.ury.server.protocol.DecodeFailureException;
-import uk.org.ury.server.protocol.Directive;
+import uk.org.ury.protocol.Directive;
+import uk.org.ury.protocol.exceptions.DecodeFailureException;
 
 
 /**

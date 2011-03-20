@@ -15,12 +15,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 
-import uk.org.ury.database.exceptions.QueryFailureException;
 import uk.org.ury.frontend.FrontendMaster;
 import uk.org.ury.frontend.FrontendModulePanel;
 import uk.org.ury.frontend.HintField;
 import uk.org.ury.frontend.exceptions.UICreationFailureException;
+
 import uk.org.ury.library.exceptions.EmptySearchException;
+
+import uk.org.ury.protocol.exceptions.InvalidMessageException;
 
 
 /**
@@ -173,7 +175,7 @@ public class LibraryViewerPanel extends FrontendModulePanel
           {
             master.doSearch (searchTerm);
           }
-        catch (QueryFailureException e)
+        catch (InvalidMessageException e)
           {
             searchFailureMessage = String.format (rb.getString ("ERR_SEARCH_FAILED"),
                                                   searchTerm, e.getMessage ());

@@ -36,14 +36,14 @@ import uk.org.ury.database.DatabaseDriver;
 import uk.org.ury.database.UserClass;
 import uk.org.ury.database.exceptions.ConnectionFailureException;
 import uk.org.ury.database.exceptions.MissingCredentialsException;
+import uk.org.ury.protocol.Directive;
+import uk.org.ury.protocol.Status;
 import uk.org.ury.server.exceptions.BadRequestException;
 import uk.org.ury.server.exceptions.HandleFailureException;
 import uk.org.ury.server.exceptions.HandlerNotFoundException;
 import uk.org.ury.server.exceptions.HandlerSetupFailureException;
 import uk.org.ury.server.exceptions.HandlingException;
 import uk.org.ury.server.exceptions.NotAHandlerException;
-import uk.org.ury.server.protocol.Directive;
-import uk.org.ury.server.protocol.Status;
 
 /**
  * The unified URY server, accepting requests over HTTP.
