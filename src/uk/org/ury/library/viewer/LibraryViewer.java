@@ -94,7 +94,7 @@ public class LibraryViewer extends AbstractFrontendModule {
 
 	try {
 	    response = cl
-		    .get("/library/LibraryRequestHandler?function=search&search="
+		    .get("/library/tracks?search="
 			    + search);
 	} catch (DecodeFailureException e) {
 	    throw new InvalidMessageException(e.getMessage());

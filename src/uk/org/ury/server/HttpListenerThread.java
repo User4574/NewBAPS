@@ -60,6 +60,8 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 
+import uk.org.ury.library.LibraryRequestHandler;
+
 /**
  * Listener thread for the URY server HTTP interface.
  * 
@@ -75,23 +77,24 @@ public class HttpListenerThread extends Thread {
     public HttpListenerThread(int port, Server server) throws IOException {
 	ssocket = new ServerSocket(port);
 	params = new SyncBasicHttpParams();
-	
-        params
-        .setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 5000)
-        .setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024)
-        .setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false)
-        .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
-        .setParameter(CoreProtocolPNames.ORIGIN_SERVER, "HttpComponents/1.1");
 
-        httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
-            new ResponseDate(),
-            new ResponseServer(),
-            new ResponseContent(),
-            new ResponseConnControl()
-        });
-        
+	params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 5000)
+		.setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE,
+			8 * 1024)
+		.setBooleanParameter(
+			CoreConnectionPNames.STALE_CONNECTION_CHECK, false)
+		.setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true)
+		.setParameter(CoreProtocolPNames.ORIGIN_SERVER,
+			"HttpComponents/1.1");
+
+	httpproc = new ImmutableHttpProcessor(new HttpResponseInterceptor[] {
+		new ResponseDate(), new ResponseServer(),
+		new ResponseContent(), new ResponseConnControl() });
+
 	registry = new HttpRequestHandlerRegistry();
-	registry.register("*", new HttpHandler(server));
+	registry.register("/library/*", new LibraryRequestHandler(server,
+		"/library"));
+	registry.register("*", new HttpHandler(server, ""));
 
 	service = new HttpService(httpproc,
 		new DefaultConnectionReuseStrategy(),
@@ -105,8 +108,7 @@ public class HttpListenerThread extends Thread {
     public void run() {
 	while (Thread.interrupted() == false) {
 	    Socket csocket = null;
-	    DefaultHttpServerConnection conn 
-	            = new DefaultHttpServerConnection();
+	    DefaultHttpServerConnection conn = new DefaultHttpServerConnection();
 	    Thread thread = null;
 
 	    try {
@@ -116,7 +118,7 @@ public class HttpListenerThread extends Thread {
 		e.printStackTrace();
 		break;
 	    }
-	    
+
 	    thread = new HttpWorkerThread(service, conn);
 	    thread.setDaemon(true);
 	    thread.start();

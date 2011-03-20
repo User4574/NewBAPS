@@ -22,10 +22,10 @@ public class Client {
      *            server.
      * 
      * @return The response from the server, as a key-value map.
+     * 
      * @throws DecodeFailureException
      *             if the decode failed.
      */
-
     public Map<?, ?> get(String file) throws DecodeFailureException {
 	URL url = null;
 	URLConnection uc = null;
