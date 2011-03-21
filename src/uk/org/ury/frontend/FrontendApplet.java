@@ -11,7 +11,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import uk.org.ury.frontend.exceptions.LoadFailureException;
-import uk.org.ury.testrig.Launcher;
+import uk.org.ury.frontend.testrig.Launcher;
 
 /**
  * A frame that hosts a FrontendModulePanel, used for serving frontend panels in
