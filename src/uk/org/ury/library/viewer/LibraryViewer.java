@@ -33,6 +33,14 @@ import uk.org.ury.protocol.exceptions.InvalidMessageException;
 /**
  * Module for investigating the track library.
  * 
+ * The <code>LibraryViewer</code> and its corresponding user 
+ * interface, <code>LibraryViewerPanel</code>, provide a 
+ * user interface for querying the server's library services 
+ * for track information.
+ * 
+ * Subclasses of this module provide editing features for 
+ * the track library.
+ * 
  * @author Matt Windsor
  */
 public class LibraryViewer extends AbstractFrontendModule {
@@ -44,7 +52,7 @@ public class LibraryViewer extends AbstractFrontendModule {
     private LibraryViewerPanel panel;
 
     /**
-     * Construct a new LibraryViewer as a frontend object.
+     * Constructs a new LibraryViewer as a frontend object.
      */
     public LibraryViewer() {
 	libraryList = new ArrayList<LibraryItem>();
@@ -52,7 +60,7 @@ public class LibraryViewer extends AbstractFrontendModule {
     }
 
     /**
-     * Run the library viewer frontend.
+     * Runs the library viewer frontend.
      */
     @Override
     public FrontendModulePanel runFrontend(FrontendMaster master) {
@@ -66,7 +74,7 @@ public class LibraryViewer extends AbstractFrontendModule {
     }
 
     /**
-     * Do a library search.
+     * Does a library search.
      * 
      * This will update the library list to reflect the results of the search.
      * 

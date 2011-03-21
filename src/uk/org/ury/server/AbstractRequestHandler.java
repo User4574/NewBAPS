@@ -41,7 +41,7 @@ public abstract class AbstractRequestHandler implements HttpRequestHandler {
     protected String mount;
 
     /**
-     * Construct a new AbstractRequestHandler.
+     * Constructs a new AbstractRequestHandler.
      * 
      * Obviously, this class cannot be instantiated directly.
      * 
@@ -97,7 +97,7 @@ public abstract class AbstractRequestHandler implements HttpRequestHandler {
     }
 
     /**
-     * Serve a HTTP plain-text error as the HTTP response for a request.
+     * Serves a HTTP plain-text error as the HTTP response for a request.
      * 
      * @param request
      *            The request that is being responded to.
@@ -151,7 +151,7 @@ public abstract class AbstractRequestHandler implements HttpRequestHandler {
     }
 
     /**
-     * Handle a HTTP GET request.
+     * Handles a HTTP GET request.
      * 
      * @param request
      *            The HTTP request.
@@ -193,7 +193,7 @@ public abstract class AbstractRequestHandler implements HttpRequestHandler {
 	    UnknownFunctionException;
 
     /**
-     * Parse a query string, populating a key-value map of the URL-unescaped
+     * Parses a query string, populating a key-value map of the URL-unescaped
      * results.
      * 
      * @param query
@@ -234,7 +234,7 @@ public abstract class AbstractRequestHandler implements HttpRequestHandler {
     }
 
     /**
-     * Get the query string element of a
+     * Gets the query string element of a URI.
      * 
      * @param uri
      *            The Uniform Resource Indicator whose query string should be

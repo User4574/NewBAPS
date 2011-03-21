@@ -31,7 +31,8 @@ import uk.org.ury.protocol.exceptions.InvalidMessageException;
 /**
  * Frontend panel providing access to an underlying library viewer.
  * 
- * @author Matt Windsor, Nathan Lasseter
+ * @author Matt Windsor
+ * @author Nathan Lasseter
  */
 public class LibraryViewerPanel extends FrontendModulePanel {
     /**

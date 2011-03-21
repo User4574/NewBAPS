@@ -23,6 +23,7 @@ import uk.org.ury.database.exceptions.MissingCredentialsException;
  * The unified URY server, accepting requests over HTTP.
  * 
  * @author Matt Windsor
+ * @version 2011.0320
  */
 public class Server {
     public static final String SERVER_VERSION = "SLUT 0.0";
@@ -66,7 +67,7 @@ public class Server {
     }
 
     /**
-     * Get a database connection using the given user class.
+     * Gets a database connection using the given user class.
      * 
      * @param userClass
      *            The user class to get a connection for.
