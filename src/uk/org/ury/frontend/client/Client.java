@@ -1,3 +1,14 @@
+/*
+ * Client.java
+ * -----------
+ * 
+ * Part of the URY Frontend Platform
+ * 
+ * V0.00  2011/03/23
+ * 
+ * (C) 2011 URY Computing
+ */
+
 package uk.org.ury.frontend.client;
 
 import java.io.BufferedReader;
@@ -13,6 +24,11 @@ import java.util.Map;
 import uk.org.ury.common.protocol.ProtocolUtils;
 import uk.org.ury.common.protocol.exceptions.DecodeFailureException;
 
+/**
+ * An implementation of a client to communicate with the URY Server.
+ * 
+ * @author Matt Windsor
+ */
 public class Client {
     /**
      * Get a raw response from the server.
@@ -26,7 +42,7 @@ public class Client {
      * @throws DecodeFailureException
      *             if the decode failed.
      */
-    public Map<?, ?> get(String file) throws DecodeFailureException {
+    public Map<String, Object> get(String file) throws DecodeFailureException {
 	URL url = null;
 	URLConnection uc = null;
 	String result = "";

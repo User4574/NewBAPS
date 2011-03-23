@@ -43,10 +43,10 @@ public class ClientTest {
     public void testGet() {
 	Client client = new Client();
 
-	Map<?, ?> response = null;
+	Map<String, Object> response = null;
 
 	try {
-	    response = client.get("/server/ServerRequestHandler?function=test");
+	    response = client.get("/backend/server/ServerRequestHandler?function=test");
 	} catch (DecodeFailureException e) {
 	    e.printStackTrace();
 	}

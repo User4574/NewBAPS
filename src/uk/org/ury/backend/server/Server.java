@@ -50,7 +50,7 @@ public class Server {
     }
 
     /**
-     * Run the server.
+     * Runs the server.
      */
     private void run() {
 	Thread thread = null;

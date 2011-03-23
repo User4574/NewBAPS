@@ -1,32 +1,35 @@
-/**
+/*
+ * DecodeFailureException.java
+ * ---------------------------
  * 
+ * Part of the URY Common Package
+ * 
+ * V0.00  2011/03/23
+ * 
+ * (C) 2011 URY Computing
  */
-package uk.org.ury.common.protocol.exceptions;
 
+package uk.org.ury.common.protocol.exceptions;
 
 /**
  * Exception thrown when the protocol decoder fails.
  * 
- * @author  Matt Windsor
+ * @author Matt Windsor
  */
+public class DecodeFailureException extends Exception {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4080891009444990296L;
 
-public class DecodeFailureException extends Exception
-{
-  /**
-   * 
-   */
-  private static final long serialVersionUID = -3972492943653273528L;
-
-  
-  /**
-   * Construct a new DecodeFailureException with a reason.
-   * 
-   * @param reason  The reason for throwing the exception.
-   */
-  
-  public
-  DecodeFailureException (String reason)
-  {
-    super (reason);
-  }
+    /**
+     * Construct a new DecodeFailureException with a chained exception.
+     * 
+     * @param cause
+     *            The exception to chain.
+     */
+    public DecodeFailureException(Throwable cause) {
+	super("Decoding engine failed with reason: " + cause.getMessage(),
+		cause);
+    }
 }

@@ -51,7 +51,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
-import org.json.simple.JSONValue;
 
 import uk.org.ury.backend.server.exceptions.BadRequestException;
 import uk.org.ury.backend.server.exceptions.HandleFailureException;
@@ -59,7 +58,9 @@ import uk.org.ury.backend.server.exceptions.HandlerNotFoundException;
 import uk.org.ury.backend.server.exceptions.HandlerSetupFailureException;
 import uk.org.ury.backend.server.exceptions.NotAHandlerException;
 import uk.org.ury.common.protocol.Directive;
+import uk.org.ury.common.protocol.ProtocolUtils;
 import uk.org.ury.common.protocol.Status;
+import uk.org.ury.common.protocol.exceptions.EncodeFailureException;
 
 /**
  * @author Matt Windsor, Apache Software Foundation
@@ -193,9 +194,11 @@ public class HttpHandler extends AbstractRequestHandler implements
 	    StringEntity entity = null;
 
 	    try {
-		entity = new StringEntity(JSONValue.toJSONString(content));
+		entity = new StringEntity(ProtocolUtils.encode(content));
 	    } catch (UnsupportedEncodingException e) {
 		throw new HandlerSetupFailureException(className, e);
+	    } catch (EncodeFailureException e) {
+		throw new HandleFailureException(e);
 	    }
 
 	    entity.setContentType(HTTP.PLAIN_TEXT_TYPE);

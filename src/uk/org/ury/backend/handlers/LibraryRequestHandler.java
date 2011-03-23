@@ -16,7 +16,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
-import org.json.simple.JSONValue;
 
 import uk.org.ury.backend.database.DatabaseDriver;
 import uk.org.ury.backend.database.UserClass;
@@ -35,7 +34,9 @@ import uk.org.ury.common.library.LibraryUtils;
 import uk.org.ury.common.library.exceptions.EmptySearchException;
 import uk.org.ury.common.library.item.LibraryItem;
 import uk.org.ury.common.protocol.Directive;
+import uk.org.ury.common.protocol.ProtocolUtils;
 import uk.org.ury.common.protocol.Status;
+import uk.org.ury.common.protocol.exceptions.EncodeFailureException;
 
 /**
  * A request handler for library queries.
@@ -178,11 +179,13 @@ public class LibraryRequestHandler extends AbstractRequestHandler {
 	StringEntity entity = null;
 
 	try {
-	    entity = new StringEntity(JSONValue.toJSONString(content));
+	    entity = new StringEntity(ProtocolUtils.encode(content));
 	} catch (UnsupportedEncodingException e) {
 	    throw new HandlerSetupFailureException(getClass().getName(), e);
+	} catch (EncodeFailureException e) {
+	    throw new HandleFailureException(e);
 	}
-
+	
 	entity.setContentType(HTTP.PLAIN_TEXT_TYPE);
 	response.setEntity(entity);
     }

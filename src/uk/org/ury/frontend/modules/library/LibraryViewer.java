@@ -97,7 +97,7 @@ public class LibraryViewer extends AbstractFrontendModule {
 	    throw new EmptySearchException();
 
 	Client cl = new Client();
-	Map<?, ?> response = null;
+	Map<String, Object> response = null;
 	libraryList.clear();
 
 	try {

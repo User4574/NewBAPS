@@ -1,14 +1,23 @@
-/**
+/*
+ * ProtocolUtils.java
+ * ------------------
  * 
+ * Part of the URY Common Packages
+ * 
+ * V0.00  2011/03/23
+ * 
+ * (C) 2011 URY Computing
  */
+
 package uk.org.ury.common.protocol;
 
 import java.util.Map;
 
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import uk.org.ury.common.protocol.exceptions.DecodeFailureException;
+import uk.org.ury.common.protocol.exceptions.EncodeFailureException;
 import uk.org.ury.common.protocol.exceptions.InvalidMessageException;
 
 /**
@@ -18,8 +27,9 @@ import uk.org.ury.common.protocol.exceptions.InvalidMessageException;
  * @author Matt Windsor
  * 
  */
-
 public class ProtocolUtils {
+    private static final ObjectMapper mapper = new ObjectMapper();
+
     /**
      * Encode a key-value map into a protocol string.
      * 
@@ -33,13 +43,21 @@ public class ProtocolUtils {
      *            directives.
      * 
      * @return A string containing the encoded representation of the map.
+     * 
+     * @throws EncodeFailureException
+     *             if the encoding engine fails to encode the map as a string.
      */
-    public static String encode(Map<String, Object> items) {
-	return JSONValue.toJSONString(items);
+    public static String encode(Map<String, Object> items)
+	    throws EncodeFailureException {
+	try {
+	    return mapper.writeValueAsString(items);
+	} catch (Exception e) {
+	    throw new EncodeFailureException(e);
+	}
     }
 
     /**
-     * Decode a protocol string into a key-value map.
+     * Decodes a protocol string into a key-value map.
      * 
      * @param string
      *            The string to decode.
@@ -47,19 +65,18 @@ public class ProtocolUtils {
      * @return A key-value map mapping directives to strings, lists and maps.
      * 
      * @throws DecodeFailureException
-     *             if the decoding engine returns something other than a map.
+     *             if the decoding engine fails to decode the string.
      */
-    public static Map<?, ?> decode(String string) throws DecodeFailureException {
-	Object result = JSONValue.parse(string);
-
-	if (result instanceof JSONObject)
-	    return (JSONObject) result;
-	else
-	    throw new DecodeFailureException("Result not a map.");
+    public static Map<String, Object> decode(String string) throws DecodeFailureException {
+	try {
+	    return mapper.readValue(string, new TypeReference<Map<String, Object>>() {});
+	} catch (Exception e) {
+	    throw new DecodeFailureException(e);
+	}
     }
 
     /**
-     * Check if a response is flagged as having OK status.
+     * Checks if a response is flagged as having OK status.
      * 
      * @param response
      *            The response message, as a key-value map (eg in decoded
@@ -71,7 +88,7 @@ public class ProtocolUtils {
      * @throws InvalidMessageException
      *             if the response is invalid (eg the status is missing).
      */
-    public static boolean responseIsOK(Map<?, ?> response)
+    public static boolean responseIsOK(Map<String, Object> response)
 	    throws InvalidMessageException {
 	if (response.containsKey(Directive.STATUS.toString()) == false)
 	    throw new InvalidMessageException("No status line in response.");

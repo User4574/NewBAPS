@@ -18,7 +18,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
-import org.json.simple.JSONValue;
 
 import uk.org.ury.backend.server.exceptions.BadRequestException;
 import uk.org.ury.backend.server.exceptions.HandleFailureException;
@@ -28,7 +27,9 @@ import uk.org.ury.backend.server.exceptions.HandlingException;
 import uk.org.ury.backend.server.exceptions.NotAHandlerException;
 import uk.org.ury.backend.server.exceptions.UnknownFunctionException;
 import uk.org.ury.common.protocol.Directive;
+import uk.org.ury.common.protocol.ProtocolUtils;
 import uk.org.ury.common.protocol.Status;
+import uk.org.ury.common.protocol.exceptions.EncodeFailureException;
 
 /**
  * An abstract request handler for HttpCore, providing basic functionality such
@@ -138,8 +139,11 @@ public abstract class AbstractRequestHandler implements HttpRequestHandler {
 	    content.put(Directive.STATUS.toString(), Status.ERROR.toString());
 	    content.put(Directive.REASON.toString(), reason);
 
-	    entity = new StringEntity(JSONValue.toJSONString(content));
+	    entity = new StringEntity(ProtocolUtils.encode(content));
 	} catch (UnsupportedEncodingException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (EncodeFailureException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
