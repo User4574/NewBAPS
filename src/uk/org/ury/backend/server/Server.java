@@ -2,7 +2,7 @@
  * Server.java
  * -----------
  * 
- * Part of the URY Server Platform
+ * Part of the URY Backend Platform
  * 
  * V0.00  2011/03/20
  * 

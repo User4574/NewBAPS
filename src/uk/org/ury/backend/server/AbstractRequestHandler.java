@@ -1,6 +1,14 @@
-/**
+/*
+ * AbstractRequestHandler.java
+ * ---------------------------
  * 
+ * Part of the URY Backend Platform
+ * 
+ * V0.00  2011/03/24
+ * 
+ * (C) 2011 URY Computing
  */
+
 package uk.org.ury.backend.server;
 
 import java.io.IOException;
@@ -95,6 +103,48 @@ public abstract class AbstractRequestHandler implements HttpRequestHandler {
 	    serveError(request, response, HttpStatus.SC_NOT_IMPLEMENTED,
 		    "Method not implemented.");
 	}
+    }
+
+    /**
+     * Serves a key-value map as a protocol-encoded response.
+     * 
+     * @param request
+     *            The request that is being responded to.
+     * 
+     * @param response
+     *            The response to populate with the contents provided.
+     * 
+     * @param contents
+     *            The key-value map of contents to be encoded and served.
+     * 
+     * @throws HandlerSetupFailureException
+     *             if the handler was found but could not be set up (eg does not
+     *             implement appropriate interface or cannot be instantiated).
+     * 
+     * @throws HandleFailureException
+     *             if an appropriate handler was contacted, but it failed to
+     *             process the request.
+     */
+    protected final void serveContent(HttpRequest request,
+	    HttpResponse response, Map<String, Object> content)
+	    throws HandlerSetupFailureException, HandleFailureException {
+	response.setStatusLine(request.getProtocolVersion(), HttpStatus.SC_OK,
+		"OK");
+	
+	content.put(Directive.STATUS.toString(), Status.OK.toString());
+
+	StringEntity entity = null;
+
+	try {
+	    entity = new StringEntity(ProtocolUtils.encode(content));
+	} catch (UnsupportedEncodingException e) {
+	    throw new HandlerSetupFailureException(getClass().getName(), e);
+	} catch (EncodeFailureException e) {
+	    throw new HandleFailureException(e);
+	}
+
+	entity.setContentType(HTTP.PLAIN_TEXT_TYPE);
+	response.setEntity(entity);
     }
 
     /**

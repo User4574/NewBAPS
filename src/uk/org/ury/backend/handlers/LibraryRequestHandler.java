@@ -1,6 +1,14 @@
-/**
+/*
+ * LibraryRequestHandler.java
+ * --------------------------
  * 
+ * Part of the URY Backend Platform
+ * 
+ * V0.00  2011/03/24
+ * 
+ * (C) 2011 URY Computing
  */
+
 package uk.org.ury.backend.handlers;
 
 import java.io.UnsupportedEncodingException;
@@ -12,9 +20,6 @@ import java.util.Map;
 
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
 import uk.org.ury.backend.database.DatabaseDriver;
@@ -34,9 +39,6 @@ import uk.org.ury.common.library.LibraryUtils;
 import uk.org.ury.common.library.exceptions.EmptySearchException;
 import uk.org.ury.common.library.item.LibraryItem;
 import uk.org.ury.common.protocol.Directive;
-import uk.org.ury.common.protocol.ProtocolUtils;
-import uk.org.ury.common.protocol.Status;
-import uk.org.ury.common.protocol.exceptions.EncodeFailureException;
 
 /**
  * A request handler for library queries.
@@ -74,7 +76,6 @@ public class LibraryRequestHandler extends AbstractRequestHandler {
      * @throws HandleFailureException
      *             if an error occurs that thwarts the handling of the request.
      */
-
     private void doSearch(Map<String, String> parameters,
 	    Map<String, Object> response, Server server)
 	    throws HandleFailureException {
@@ -170,23 +171,7 @@ public class LibraryRequestHandler extends AbstractRequestHandler {
 	} else {
 	    throw new UnknownFunctionException(path);
 	}
-
-	response.setStatusLine(request.getProtocolVersion(), HttpStatus.SC_OK,
-		"OK");
-
-	content.put(Directive.STATUS.toString(), Status.OK.toString());
-
-	StringEntity entity = null;
-
-	try {
-	    entity = new StringEntity(ProtocolUtils.encode(content));
-	} catch (UnsupportedEncodingException e) {
-	    throw new HandlerSetupFailureException(getClass().getName(), e);
-	} catch (EncodeFailureException e) {
-	    throw new HandleFailureException(e);
-	}
 	
-	entity.setContentType(HTTP.PLAIN_TEXT_TYPE);
-	response.setEntity(entity);
+	serveContent(request, response, content);
     }
 }

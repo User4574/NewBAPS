@@ -1,8 +1,8 @@
 /*
  * HttpHandler.java
- * ---------------------
+ * ----------------
  * 
- * Part of the URY Server Platform
+ * Part of the URY Backend Platform
  * 
  * V0.00  2011/03/20
  * 
@@ -48,7 +48,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 
@@ -57,10 +56,6 @@ import uk.org.ury.backend.server.exceptions.HandleFailureException;
 import uk.org.ury.backend.server.exceptions.HandlerNotFoundException;
 import uk.org.ury.backend.server.exceptions.HandlerSetupFailureException;
 import uk.org.ury.backend.server.exceptions.NotAHandlerException;
-import uk.org.ury.common.protocol.Directive;
-import uk.org.ury.common.protocol.ProtocolUtils;
-import uk.org.ury.common.protocol.Status;
-import uk.org.ury.common.protocol.exceptions.EncodeFailureException;
 
 /**
  * @author Matt Windsor, Apache Software Foundation
@@ -184,25 +179,7 @@ public class HttpHandler extends AbstractRequestHandler implements
 		throw new HandlerSetupFailureException(className, e);
 	    }
 
-	    // Everything seems OK, so make the response.
-
-	    response.setStatusLine(request.getProtocolVersion(),
-		    HttpStatus.SC_OK, "OK");
-
-	    content.put(Directive.STATUS.toString(), Status.OK.toString());
-
-	    StringEntity entity = null;
-
-	    try {
-		entity = new StringEntity(ProtocolUtils.encode(content));
-	    } catch (UnsupportedEncodingException e) {
-		throw new HandlerSetupFailureException(className, e);
-	    } catch (EncodeFailureException e) {
-		throw new HandleFailureException(e);
-	    }
-
-	    entity.setContentType(HTTP.PLAIN_TEXT_TYPE);
-	    response.setEntity(entity);
+	    serveContent(request, response, content);
 	}
     }
 }
