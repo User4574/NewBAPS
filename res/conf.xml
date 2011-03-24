@@ -9,20 +9,20 @@
 <config version="1.2" >
 
 	<database>
-		<host>4574.co.uk</host>
+		<host>host</host>
 		<port>5432</port>
-		<db>membership</db>
+		<db>db</db>
 	</database>
 
 	<auth>
-		<user>bapsserver</user>
-		<pass>Bap553rv3r</pass>
+		<user>rouser</user>
+		<pass>ropass</pass>
 		<type>read_only</type>
 	</auth>
 	
 	<auth>
-		<user>xwrite</user>
-		<pass>password</pass>
+		<user>rwuser</user>
+		<pass>rwpass</pass>
 		<type>read_write</type>
 	</auth>
 </config>
